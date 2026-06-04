@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monopoly Ultimate Banking Unit</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
         .lcd-screen {
             font-family: 'Courier New', Courier, monospace;
@@ -16,19 +15,16 @@
         .log-terminal {
             font-family: 'Courier New', Courier, monospace;
         }
-        /* Lock scanner dimensions so frames don't distort */
-        #qr-reader {
-            width: 100% !important;
-            background: #000 !important;
-            border: none !important;
+        /* Custom scrollbar for property deck */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
         }
-        #qr-reader__dashboard_section_csr button {
-            background-color: #ef4444 !important;
-            color: white !important;
-            padding: 0.5rem 1rem !important;
-            border-radius: 0.375rem !important;
-            font-weight: bold !important;
-            margin-top: 10px !important;
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 3px;
         }
     </style>
 </head>
@@ -37,7 +33,7 @@
     <div class="max-w-7xl w-full space-y-6">
         <header class="text-center">
             <h1 class="text-3xl font-extrabold tracking-wider text-red-600 uppercase">Ultimate Banking Unit</h1>
-            <p class="text-gray-400 text-xs mt-1">Hardware Lens Auto-Parser Engine</p>
+            <p class="text-gray-400 text-xs mt-1">Tactile Haptic Feedback & Instant Tap Edition</p>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -46,10 +42,10 @@
                 <div class="lcd-screen w-full p-4 rounded-lg border-4 border-inset border-gray-900 h-36 flex flex-col justify-between shadow-inner">
                     <div class="flex justify-between items-center text-[10px] font-bold border-b border-emerald-900 pb-0.5">
                         <span id="lcd-state">SETUP PHASE</span>
-                        <span id="lcd-substate">AWAITING LENS INITIALIZATION</span>
+                        <span id="lcd-substate">READY TO SCAN</span>
                     </div>
-                    <div id="lcd-main" class="text-center text-sm font-black my-auto tracking-wide uppercase leading-tight">
-                        Tap "Start Live Scanner" to activate camera feed
+                    <div id="lcd-main" class="text-center text-base font-black my-auto tracking-wide uppercase leading-tight">
+                        Tap any card key below to register players
                     </div>
                     <div id="lcd-footer" class="text-right text-[10px] font-bold">
                         Roster: 0/4 Active
@@ -64,7 +60,7 @@
 
                 <div class="bg-gray-750 p-3 rounded-xl border border-gray-700 text-xs">
                     <div class="flex gap-2">
-                        <input type="text" id="manual-string" placeholder="Fallback typing (e.g. P1, H1)" class="bg-gray-900 border border-gray-600 rounded-lg px-3 py-1.5 focus:outline-none focus:border-red-500 flex-grow font-mono uppercase text-white">
+                        <input type="text" id="manual-string" placeholder="Type custom string directly..." class="bg-gray-900 border border-gray-600 rounded-lg px-3 py-1.5 focus:outline-none focus:border-red-500 flex-grow font-mono uppercase text-white">
                         <button onclick="injectManualString()" class="bg-gray-600 hover:bg-gray-500 px-3 py-1.5 rounded-lg font-bold uppercase tracking-wider">Inject</button>
                     </div>
                 </div>
@@ -72,25 +68,50 @@
 
             <div class="bg-gray-800 p-5 rounded-2xl border-4 border-gray-700 shadow-xl flex flex-col justify-between space-y-4">
                 <div>
-                    <div class="flex justify-between items-center mb-3">
+                    <div class="flex justify-between items-center mb-2">
                         <h2 class="text-sm font-bold text-gray-200 flex items-center gap-2">
-                            <span id="lens-indicator-dot" class="w-2.5 h-2.5 rounded-full bg-gray-600"></span> 
-                            Camera Viewport Window
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Instant Tap Scanner
                         </h2>
-                        <span id="scan-laser" class="text-[10px] font-mono bg-gray-900 text-gray-400 px-1.5 py-0.5 rounded">LENS SHUTTER CLOSED</span>
+                        <span id="scan-laser" class="text-[10px] font-mono bg-gray-900 text-gray-400 px-1.5 py-0.5 rounded transition-all">SYSTEM READY</span>
                     </div>
-                    
-                    <div class="bg-black rounded-xl overflow-hidden border border-gray-600 min-h-[200px] flex flex-col items-center justify-center p-2">
-                        <div id="qr-reader" class="w-full"></div>
-                        <button id="start-scan-btn" onclick="startCameraScanner()" class="mt-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 px-5 rounded-xl uppercase tracking-wider transition-colors shadow">
-                            📷 Start Live Scanner
-                        </button>
-                    </div>
-                </div>
 
-                <div class="bg-gray-900 p-3 rounded-xl border border-gray-700 text-[11px] text-gray-400">
-                    <span class="text-gray-200 font-bold block mb-1 uppercase">💡 Scanning Tips:</span>
-                    When the camera turns on, align the small barcode/QR area found on your physical card directly within the center square guidelines.
+                    <div class="mb-4">
+                        <span class="text-[10px] uppercase font-bold text-gray-400 block mb-1.5">Tap Player Bank Card:</span>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button onclick="processEventString('P1')" class="bg-slate-700 hover:bg-slate-600 text-white font-mono text-xs py-2.5 rounded-xl font-bold text-center border border-slate-500 shadow active:scale-95 transition-transform">🛩️ P1</button>
+                            <button onclick="processEventString('P2')" class="bg-blue-900 hover:bg-blue-800 text-blue-100 font-mono text-xs py-2.5 rounded-xl font-bold text-center border border-blue-600 shadow active:scale-95 transition-transform">🚢 P2</button>
+                            <button onclick="processEventString('P3')" class="bg-red-900 hover:bg-red-800 text-red-100 font-mono text-xs py-2.5 rounded-xl font-bold text-center border border-red-600 shadow active:scale-95 transition-transform">🚗 P3</button>
+                            <button onclick="processEventString('P4')" class="bg-emerald-900 hover:bg-emerald-800 text-emerald-100 font-mono text-xs py-2.5 rounded-xl font-bold text-center border border-emerald-600 shadow active:scale-95 transition-transform">🛸 P4</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-[10px] uppercase font-bold text-gray-400 block mb-1.5">Tap Board Space (Clockwise H1 - H22):</span>
+                        <div class="grid grid-cols-6 gap-1.5 max-h-44 overflow-y-auto pr-1 custom-scroll">
+                            <button onclick="processEventString('H1')" class="bg-amber-950/80 hover:bg-amber-900 text-amber-200 text-xs py-2 rounded-lg font-mono border border-amber-800/60 font-bold">H1</button>
+                            <button onclick="processEventString('H2')" class="bg-amber-950/80 hover:bg-amber-900 text-amber-200 text-xs py-2 rounded-lg font-mono border border-amber-800/60 font-bold">H2</button>
+                            <button onclick="processEventString('H3')" class="bg-sky-950/80 hover:bg-sky-900 text-sky-200 text-xs py-2 rounded-lg font-mono border border-sky-800/60 font-bold">H3</button>
+                            <button onclick="processEventString('H4')" class="bg-sky-950/80 hover:bg-sky-900 text-sky-200 text-xs py-2 rounded-lg font-mono border border-sky-800/60 font-bold">H4</button>
+                            <button onclick="processEventString('H5')" class="bg-sky-950/80 hover:bg-sky-900 text-sky-200 text-xs py-2 rounded-lg font-mono border border-sky-800/60 font-bold">H5</button>
+                            <button onclick="processEventString('H6')" class="bg-pink-950/80 hover:bg-pink-900 text-pink-200 text-xs py-2 rounded-lg font-mono border border-pink-800/60 font-bold">H6</button>
+                            <button onclick="processEventString('H7')" class="bg-pink-950/80 hover:bg-pink-900 text-pink-200 text-xs py-2 rounded-lg font-mono border border-pink-800/60 font-bold">H7</button>
+                            <button onclick="processEventString('H8')" class="bg-pink-950/80 hover:bg-pink-900 text-pink-200 text-xs py-2 rounded-lg font-mono border border-pink-800/60 font-bold">H8</button>
+                            <button onclick="processEventString('H9')" class="bg-orange-950/80 hover:bg-orange-900 text-orange-200 text-xs py-2 rounded-lg font-mono border border-orange-800/60 font-bold">H9</button>
+                            <button onclick="processEventString('H10')" class="bg-orange-950/80 hover:bg-orange-900 text-orange-200 text-xs py-2 rounded-lg font-mono border border-orange-800/60 font-bold">H10</button>
+                            <button onclick="processEventString('H11')" class="bg-orange-950/80 hover:bg-orange-900 text-orange-200 text-xs py-2 rounded-lg font-mono border border-orange-800/60 font-bold">H11</button>
+                            <button onclick="processEventString('H12')" class="bg-red-950/80 hover:bg-red-900 text-red-200 text-xs py-2 rounded-lg font-mono border border-red-800/60 font-bold">H12</button>
+                            <button onclick="processEventString('H13')" class="bg-red-950/80 hover:bg-red-900 text-red-200 text-xs py-2 rounded-lg font-mono border border-red-800/60 font-bold">H13</button>
+                            <button onclick="processEventString('H14')" class="bg-red-950/80 hover:bg-red-900 text-red-200 text-xs py-2 rounded-lg font-mono border border-red-800/60 font-bold">H14</button>
+                            <button onclick="processEventString('H15')" class="bg-yellow-950/80 hover:bg-yellow-900 text-yellow-200 text-xs py-2 rounded-lg font-mono border border-yellow-800/60 font-bold">H15</button>
+                            <button onclick="processEventString('H16')" class="bg-yellow-950/80 hover:bg-yellow-900 text-yellow-200 text-xs py-2 rounded-lg font-mono border border-yellow-800/60 font-bold">H16</button>
+                            <button onclick="processEventString('H17')" class="bg-yellow-950/80 hover:bg-yellow-900 text-yellow-200 text-xs py-2 rounded-lg font-mono border border-yellow-800/60 font-bold">H17</button>
+                            <button onclick="processEventString('H18')" class="bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 text-xs py-2 rounded-lg font-mono border border-emerald-800/60 font-bold">H18</button>
+                            <button onclick="processEventString('H19')" class="bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 text-xs py-2 rounded-lg font-mono border border-emerald-800/60 font-bold">H19</button>
+                            <button onclick="processEventString('H20')" class="bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 text-xs py-2 rounded-lg font-mono border border-emerald-800/60 font-bold">H20</button>
+                            <button onclick="processEventString('H21')" class="bg-indigo-950/80 hover:bg-indigo-900 text-indigo-200 text-xs py-2 rounded-lg font-mono border border-indigo-800/60 font-bold">H21</button>
+                            <button onclick="processEventString('H22')" class="bg-indigo-950/80 hover:bg-indigo-900 text-indigo-200 text-xs py-2 rounded-lg font-mono border border-indigo-800/60 font-bold">H22</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -101,7 +122,7 @@
                         <button onclick="clearAuditLogs()" class="text-[9px] text-gray-400 hover:text-red-400 font-mono uppercase">Wipe Terminal</button>
                     </div>
                     <div id="terminal-log-box" class="log-terminal text-[10px] text-emerald-400 bg-gray-950 p-3 rounded-xl border border-gray-800 h-64 overflow-y-auto space-y-1.5 shadow-inner">
-                        <div>[00:00:00] INT_SYS_INIT // System ready. Prompt mobile device for hardware camera initialization.</div>
+                        <div>[00:00:00] INT_SYS_INIT // Tactical panel active. System reading inputs...</div>
                     </div>
                 </div>
             </div>
@@ -112,13 +133,13 @@
                 Active Financial Ledger
             </h2>
             <div id="player-ledger-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="col-span-full text-center py-6 text-gray-500 italic text-xs">Roster unpopulated. Fire up camera and map cards.</div>
+                <div class="col-span-full text-center py-6 text-gray-500 italic text-xs">Roster unpopulated. Tap your Player Cards (P1 - P4) above to activate accounts.</div>
             </div>
         </div>
     </div>
 
     <script>
-        const GAME = { phase: 'SETUP', activePlayers: {}, playerOrder: [], pendingProperty: null, lastScanTime: 0, scannerInstance: null };
+        const GAME = { phase: 'SETUP', activePlayers: {}, playerOrder: [], pendingProperty: null };
 
         const PROPERTY_REGISTRY = {
             'H1':  { name: 'Mediterranean Ave', cost: 60, rent: [2, 10, 30, 90, 160], lvl: 1 },
@@ -139,7 +160,7 @@
             'H16': { name: 'Ventnor Ave', cost: 260, rent: [22, 110, 330, 800, 1150], lvl: 1 },
             'H17': { name: 'Marvin Gardens', cost: 280, rent: [24, 120, 360, 850, 1200], lvl: 1 },
             'H18': { name: 'Pacific Ave', cost: 300, rent: [26, 130, 390, 900, 1270], lvl: 1 },
-            'H19': { name: 'North Carolina Ave', cost: 300, text: 'H19', cost: 300, rent: [26, 130, 390, 900, 1270], lvl: 1 },
+            'H19': { name: 'North Carolina Ave', cost: 300, rent: [26, 130, 390, 900, 1270], lvl: 1 },
             'H20': { name: 'Pennsylvania Ave', cost: 320, rent: [28, 150, 450, 1000, 1400], lvl: 1 },
             'H21': { name: 'Park Place', cost: 350, rent: [35, 175, 500, 1100, 1500], lvl: 1 },
             'H22': { name: 'Boardwalk', cost: 400, rent: [50, 200, 600, 1400, 2000], lvl: 1 }
@@ -152,74 +173,26 @@
             'P4': { id: 'P4', name: 'Player 4', token: '🛸 Green Helicopter', balance: 1500, properties: [], status: 'Active' }
         };
 
-        // Tap-to-activate camera handler to comply with browser privacy rules
-        function startCameraScanner() {
-            document.getElementById('start-scan-btn').style.display = 'none';
-            logTerminalAction("CAMERA_REQ // Requesting permission stream...");
-
-            // Configure parser to support standard 1D barcodes and QR structures
-            GAME.scannerInstance = new Html5Qrcode("qr-reader");
-            
-            const config = { 
-                fps: 20, 
-                qrbox: function(width, height) {
-                    return { width: Math.floor(width * 0.8), height: Math.floor(height * 0.6) };
-                },
-                formatsToSupport: [ 
-                    Html5QrcodeSupportedFormats.QR_CODE, 
-                    Html5QrcodeSupportedFormats.CODE_128,
-                    Html5QrcodeSupportedFormats.CODE_39,
-                    Html5QrcodeSupportedFormats.EAN_8,
-                    Html5QrcodeSupportedFormats.EAN_13
-                ]
-            };
-
-            GAME.scannerInstance.start(
-                { facingMode: "environment" }, 
-                config,
-                (decodedText) => {
-                    const now = Date.now();
-                    if (now - GAME.lastScanTime > 1800) { 
-                        GAME.lastScanTime = now;
-                        processEventString(decodedText);
-                    }
-                },
-                (error) => { /* Suppress continuous polling warnings */ }
-            ).then(() => {
-                logTerminalAction("CAMERA_ONLINE // Shutter completely open. Feed visible on device display.");
-                document.getElementById('lens-indicator-dot').className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
-                document.getElementById('scan-laser').innerText = "TRACKING ACTIVE";
-                updateLCD("SETUP PHASE", "SCAN TOKEN", "Hold player token card directly in front of camera lens.");
-            }).catch(err => {
-                logTerminalAction(`HARDWARE_FAULT // Failed opening track stream. Reason: ${err}`);
-                document.getElementById('start-scan-btn').style.display = 'block';
-            });
+        // Triggers safe hardware physical buzz patterns on mobile engines
+        function triggerHapticPulse() {
+            if (navigator.vibrate) {
+                navigator.vibrate(60); // 60ms solid click feedback
+            }
         }
 
         function flashLaserNotification(code) {
             const laser = document.getElementById('scan-laser');
-            laser.innerText = `READ: [${code}]`;
-            laser.className = "text-[10px] font-mono bg-red-600 text-white px-1.5 py-0.5 rounded animate-pulse";
+            laser.innerText = `DETECTED: [${code}]`;
+            laser.className = "text-[10px] font-mono bg-red-600 text-white px-1.5 py-0.5 rounded animate-pulse shadow";
             setTimeout(() => {
-                laser.innerText = "TRACKING ACTIVE";
+                laser.innerText = "SYSTEM READY";
                 laser.className = "text-[10px] font-mono bg-gray-900 text-gray-400 px-1.5 py-0.5 rounded";
-            }, 1200);
+            }, 1000);
         }
 
         function processEventString(code) {
+            triggerHapticPulse();
             let cleanCode = code.trim().toUpperCase();
-            logTerminalAction(`DECODER_RAW // Data captured: "${cleanCode}"`);
-
-            // Regex parsing to catch raw strings embedded inside standard commercial scanning blocks
-            if (cleanCode.includes("P1")) cleanCode = "P1";
-            else if (cleanCode.includes("P2")) cleanCode = "P2";
-            else if (cleanCode.includes("P3")) cleanCode = "P3";
-            else if (cleanCode.includes("P4")) cleanCode = "P4";
-            else {
-                const match = cleanCode.match(/H(2[0-2]|1[0-9]|[1-9])/);
-                if (match) cleanCode = match[0];
-            }
-
             flashLaserNotification(cleanCode);
 
             if (GAME.phase === 'SETUP') handleSetupPhase(cleanCode);
@@ -231,16 +204,16 @@
         function handleSetupPhase(code) {
             if (PLAYER_PROFILES[code]) {
                 if (GAME.activePlayers[code]) {
-                    logTerminalAction(`WARN // Card "${PLAYER_PROFILES[code].token}" is already registered.`);
+                    logTerminalAction(`WARN // Card "${PLAYER_PROFILES[code].token}" is already inside roster.`);
                     return;
                 }
                 GAME.activePlayers[code] = JSON.parse(JSON.stringify(PLAYER_PROFILES[code]));
                 GAME.playerOrder.push(code);
-                logTerminalAction(`REGISTRY // Registered Account Asset: ${PLAYER_PROFILES[code].token}`);
-                updateLCD("REGISTRATION", `ROSTER SLOT ${GAME.playerOrder.length} OK`, `${PLAYER_PROFILES[code].token} verified! Press Checkmark Button (✓) to lock pool.`);
+                logTerminalAction(`REGISTRY // Verified: ${PLAYER_PROFILES[code].token}`);
+                updateLCD("REGISTRATION", `SLOT ${GAME.playerOrder.length} OK`, `${PLAYER_PROFILES[code].token} Added! Tap checkmark (✓) when done.`);
                 document.getElementById('lcd-footer').innerText = `Roster: ${GAME.playerOrder.length}/4 Active`;
             } else {
-                updateLCD("SETUP FAULT", "INVALID TOKEN", "Scan a real player card asset (P1-P4) to begin registry setup.");
+                updateLCD("SETUP FAULT", "BAD DEED ATTEMPT", "Tap Player Profiles P1-P4 first to setup accounts.");
             }
         }
 
@@ -251,20 +224,20 @@
                 GAME.phase = 'TRANSACTION';
 
                 if (!owner) {
-                    logTerminalAction(`DEED MATCH // ${GAME.pendingProperty.name} (${code}) is currently unowned.`);
-                    updateLCD("DEED OPEN", "AVAILABLE", `${GAME.pendingProperty.name}: costs $${GAME.pendingProperty.cost}. Show Buyer's Bank Card to purchase.`);
+                    logTerminalAction(`DEED // ${GAME.pendingProperty.name} (${code}) is unowned.`);
+                    updateLCD("DEED OPEN", "UNOWNED", `${GAME.pendingProperty.name}: $${GAME.pendingProperty.cost}. Tap Buyer's card to confirm transaction.`);
                 } else {
                     const currentRent = GAME.pendingProperty.rent[GAME.pendingProperty.lvl - 1];
-                    logTerminalAction(`RENT DETECTED // Title Deed Owner: ${owner.token}. Tier Level ${GAME.pendingProperty.lvl} Rent Fee: $${currentRent}`);
-                    updateLCD("RENT LEVY", owner.name, `Owed: $${currentRent}. Show landing Player's Bank Card.`);
+                    logTerminalAction(`RENT // Owner: ${owner.token}. Current Lvl ${GAME.pendingProperty.lvl} Rent Fee: $${currentRent}`);
+                    updateLCD("RENT LEVY", owner.name, `Rent Owed: $${currentRent}. Tap Landing Renter's card.`);
                 }
             }
         }
 
         function handleTransactionPhase(code) {
             if (!GAME.activePlayers[code]) {
-                logTerminalAction(`TX REJECTED // Code [${code}] not inside active player roster. Transaction dropped.`);
-                updateLCD("TX ABORTED", "UNKNOWN ACCOUNT", "Awaiting fresh location command.");
+                logTerminalAction(`TX DROPPED // Card [${code}] not an active player. Returning to roam state.`);
+                updateLCD("TX ABORTED", "UNKNOWN PIN", "Awaiting fresh location prompt.");
                 GAME.phase = 'ROAMING';
                 GAME.pendingProperty = null;
                 return;
@@ -277,11 +250,11 @@
                 if (player.balance >= GAME.pendingProperty.cost) {
                     player.balance -= GAME.pendingProperty.cost;
                     player.properties.push(GAME.pendingProperty);
-                    logTerminalAction(`SUCCESS // ${player.token} bought ${GAME.pendingProperty.name} for $${GAME.pendingProperty.cost}.`);
-                    updateLCD("DEED CLAIMED", player.name, `Bought ${GAME.pendingProperty.name}`);
+                    logTerminalAction(`SUCCESS // ${player.token} bought ${GAME.pendingProperty.name} (-$${GAME.pendingProperty.cost}).`);
+                    updateLCD("DEED CLAIMED", player.name, `Acquired ${GAME.pendingProperty.name}`);
                 } else {
-                    logTerminalAction(`DENIED // ${player.token} lacked matching ledger funds.`);
-                    updateLCD("TX DECLINED", "LOW BALANCE", "ledger insufficient.");
+                    logTerminalAction(`DECLINED // ${player.token} low ledger bounds.`);
+                    updateLCD("TX DECLINED", "LOW BALANCE", "Transaction denied.");
                 }
             } else {
                 if (owner.id === player.id) {
@@ -289,8 +262,8 @@
                     let pRef = owner.properties.find(p => p.id === GAME.pendingProperty.id);
                     if(pRef) pRef.lvl = GAME.pendingProperty.lvl;
 
-                    logTerminalAction(`UPGRADE // ${player.token} landed on self-owned space. ${GAME.pendingProperty.name} boosted to Lvl ${GAME.pendingProperty.lvl}.`);
-                    updateLCD("DEED UPGRADED", `LEVEL ${GAME.pendingProperty.lvl}`, `Rent increased on ${GAME.pendingProperty.name}`);
+                    logTerminalAction(`DEVELOPMENT // Self upgrade. ${GAME.pendingProperty.name} rent shifted to level ${GAME.pendingProperty.lvl}.`);
+                    updateLCD("DEED UPGRADED", `LEVEL ${GAME.pendingProperty.lvl}`, `Rent boosted on ${GAME.pendingProperty.name}`);
                 } else {
                     const rent = GAME.pendingProperty.rent[GAME.pendingProperty.lvl - 1];
                     player.balance -= rent;
@@ -300,11 +273,11 @@
                     let pRef = owner.properties.find(p => p.id === GAME.pendingProperty.id);
                     if(pRef) pRef.lvl = GAME.pendingProperty.lvl;
 
-                    logTerminalAction(`TRANSFER // Rent $${rent} processed from ${player.token} -> ${owner.token}.`);
-                    updateLCD("RENT SETTLED", "TRANSFER OK", `${player.name} transferred $${rent} to ${owner.name}.`);
+                    logTerminalAction(`FINANCES // Rent paid: $${rent} sent from ${player.token} to ${owner.token}.`);
+                    updateLCD("RENT SETTLED", "TRANSFER OK", `${player.name} paid $${rent} to ${owner.name}.`);
                     
                     if (player.balance < 0) {
-                        logTerminalAction(`CRITICAL // Bankruptcy condition triggered on ${player.token}.`);
+                        logTerminalAction(`BANKRUPTCY // ${player.token} went completely under.`);
                         processBankruptcyEnd();
                     }
                 }
@@ -318,20 +291,20 @@
             let winner = null;
             let highestNet = -1;
 
-            logTerminalAction("CRITICAL // Final accounting ledger balance checklist:");
+            logTerminalAction("CRITICAL // Sudden death liquidation calculations applied:");
             GAME.playerOrder.forEach(pId => {
                 const p = GAME.activePlayers[pId];
                 let propertyValueSum = p.properties.reduce((sum, prop) => sum + prop.cost, 0);
                 let netWorth = p.balance + propertyValueSum;
-                logTerminalAction(`LEDGER MATCH // ${p.token}: Cash ($${p.balance}) + Deeds ($${propertyValueSum}) = Total: $${netWorth}`);
+                logTerminalAction(`LEDGER // ${p.token}: Cash ($${p.balance}) + Deeds ($${propertyValueSum}) = Net Worth: $${netWorth}`);
                 if (netWorth > highestNet) {
                     highestNet = netWorth;
                     winner = p;
                 }
             });
 
-            logTerminalAction(`VICTORY // Winner: ${winner.token} wins with an accumulated valuation of $${highestNet}! 🏆`);
-            updateLCD("GAME OVER", "WINNER FOUND", `${winner.token} wins with $${highestNet}!`);
+            logTerminalAction(`VICTORY // Winner verified: ${winner.token} wins with an accumulated asset cap of $${highestNet}! 🏆`);
+            updateLCD("GAME OVER", "WINNER DISCOVERED", `${winner.token} wins with $${highestNet}!`);
         }
 
         function injectManualString() {
@@ -342,27 +315,30 @@
         }
 
         function handleHardwareButton(action) {
+            triggerHapticPulse();
             if (action === 'confirm' && GAME.phase === 'SETUP' && GAME.playerOrder.length > 0) {
                 GAME.phase = 'ROAMING';
-                logTerminalAction("SYS_STATUS // Console config locked. Game roaming sequence operational.");
-                updateLCD("GAME ACTIVE", "UNIT ONLINE", "Roster confirmed. Scan property cards clockwise.");
+                logTerminalAction("SYS_STATUS // Registration finalized. Game deck locked.");
+                updateLCD("GAME ACTIVE", "UNIT ONLINE", "Roster confirmed. Tap properties to simulate turns.");
             } else if (action === 'cancel') {
                 GAME.phase = GAME.playerOrder.length > 0 ? 'ROAMING' : 'SETUP';
                 GAME.pendingProperty = null;
-                logTerminalAction("SYS_RESET // Action buffer cleared.");
-                updateLCD("STACK RESET", "STANDBY", "Awaiting active barcode feed scan...");
+                logTerminalAction("SYS_RESET // Pending action stack flushed.");
+                updateLCD("STACK RESET", "STANDBY", "Awaiting card keys entry tap...");
             }
             updateLedgerUI();
         }
 
         function triggerPassGo(id) {
+            triggerHapticPulse();
             GAME.activePlayers[id].balance += 200;
-            logTerminalAction(`FINANCES // ${GAME.activePlayers[id].token} passed GO (+$200).`);
+            logTerminalAction(`SALARY // ${GAME.activePlayers[id].token} passed GO (+$200).`);
             updateLCD("PASS GO (+200)", GAME.activePlayers[id].name, `Account Balance: $${GAME.activePlayers[id].balance}`);
             updateLedgerUI();
         }
 
         function triggerJailToggle(id) {
+            triggerHapticPulse();
             const p = GAME.activePlayers[id];
             p.status = p.status === 'In Jail' ? 'Active' : 'In Jail';
             logTerminalAction(`STATUS_SHIFT // ${p.token} detention updated to: "${p.status}".`);
@@ -394,7 +370,7 @@
             const container = document.getElementById('player-ledger-grid');
             container.innerHTML = "";
             if (GAME.playerOrder.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center py-6 text-gray-500 italic text-xs">Roster unpopulated. Fire up camera and map cards.</div>`;
+                container.innerHTML = `<div class="col-span-full text-center py-6 text-gray-500 italic text-xs">Roster unpopulated. Tap your Player Cards (P1 - P4) above to activate accounts.</div>`;
                 return;
             }
             GAME.playerOrder.forEach(pId => {
@@ -419,10 +395,6 @@
                 container.appendChild(card);
             });
         }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            updateLedgerUI();
-        });
     </script>
 </body>
 </html>

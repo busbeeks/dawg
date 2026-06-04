@@ -15,7 +15,6 @@
         .log-terminal {
             font-family: 'Courier New', Courier, monospace;
         }
-        /* Prevents camera feed squishing on mobile dimensions */
         #camera-stream {
             object-fit: cover;
         }
@@ -23,10 +22,10 @@
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col items-center py-6 px-4">
 
-    <div class="max-w-6xl w-full space-y-6">
+    <div class="max-w-7xl w-full space-y-6">
         <header class="text-center">
             <h1 class="text-3xl font-extrabold tracking-wider text-red-600 uppercase">Ultimate Banking Unit</h1>
-            <p class="text-gray-400 text-xs mt-1">Precision Scanning Emulation &amp; Live Time Ledger Engine</p>
+            <p class="text-gray-400 text-xs mt-1">Clockwise Hardware Notation Edition (H1 - H22)</p>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -35,10 +34,10 @@
                 <div class="lcd-screen w-full p-4 rounded-lg border-4 border-inset border-gray-900 h-36 flex flex-col justify-between shadow-inner">
                     <div class="flex justify-between items-center text-[10px] font-bold border-b border-emerald-900 pb-0.5">
                         <span id="lcd-state">SETUP PHASE</span>
-                        <span id="lcd-substate">SCAN P1</span>
+                        <span id="lcd-substate">SCAN TOKEN</span>
                     </div>
                     <div id="lcd-main" class="text-center text-lg font-black my-auto tracking-wide uppercase leading-tight">
-                        Scan Player 1 Card
+                        Scan First Player Token
                     </div>
                     <div id="lcd-footer" class="text-right text-[10px] font-bold">
                         Roster: 0/4 Active
@@ -51,9 +50,9 @@
                     <button onclick="handleHardwareButton('confirm')" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-xl shadow border-b-4 border-green-800 active:border-b-0 active:mt-1 transition-all text-lg">✓</button>
                 </div>
 
-                <div class="bg-gray-850 p-3 rounded-xl border border-gray-700 text-xs">
+                <div class="bg-gray-750 p-3 rounded-xl border border-gray-700 text-xs">
                     <div class="flex gap-2">
-                        <input type="text" id="manual-string" placeholder="Manual Override String Entry" class="bg-gray-900 border border-gray-600 rounded-lg px-3 py-1.5 focus:outline-none focus:border-red-500 flex-grow font-mono uppercase text-white">
+                        <input type="text" id="manual-string" placeholder="Manual Code Input (P1-P4, H1-H22)" class="bg-gray-900 border border-gray-600 rounded-lg px-3 py-1.5 focus:outline-none focus:border-red-500 flex-grow font-mono uppercase text-white">
                         <button onclick="injectManualString()" class="bg-gray-600 hover:bg-gray-500 px-3 py-1.5 rounded-lg font-bold uppercase tracking-wider">Inject</button>
                     </div>
                 </div>
@@ -71,34 +70,45 @@
                     <div class="relative bg-black rounded-xl overflow-hidden border border-gray-600 aspect-video w-full flex items-center justify-center shadow-inner">
                         <video id="camera-stream" class="absolute inset-0 w-full h-full" autoplay playsinline></video>
                         <div class="absolute inset-0 bg-gradient-to-b from-transparent via-red-500/10 to-transparent pointer-events-none animate-pulse"></div>
-                        <div class="z-10 text-center pointer-events-none px-4">
-                            <span class="text-[10px] text-gray-400 font-bold tracking-widest uppercase bg-gray-950/80 px-2 py-1 rounded border border-gray-800">Lens Active / Processing Feed</span>
-                        </div>
                     </div>
                 </div>
 
-                <div class="space-y-2">
+                <div class="space-y-3">
                     <div>
-                        <span class="text-[10px] uppercase font-bold text-gray-400 block mb-1">Scan Token Bank Cards:</span>
+                        <span class="text-[10px] uppercase font-bold text-gray-400 block mb-1">Your 4 Box-Accurate Bank Cards:</span>
                         <div class="grid grid-cols-4 gap-1.5">
-                            <button onclick="emulateScan('P1', '🚗 Racecar Bank Card')" class="bg-red-950/60 hover:bg-red-900/80 border border-red-700/50 text-red-200 font-mono text-[10px] py-1.5 rounded font-bold uppercase tracking-wider transition-all">P1 Car</button>
-                            <button onclick="emulateScan('P2', '🚢 Jet/Ship Card')" class="bg-blue-950/60 hover:bg-blue-900/80 border border-blue-700/50 text-blue-200 font-mono text-[10px] py-1.5 rounded font-bold uppercase tracking-wider transition-all">P2 Ship</button>
-                            <button onclick="emulateScan('P3', '🛩️ Heli/Plane Card')" class="bg-amber-950/60 hover:bg-amber-900/80 border border-amber-700/50 text-amber-200 font-mono text-[10px] py-1.5 rounded font-bold uppercase tracking-wider transition-all">P3 Plane</button>
-                            <button onclick="emulateScan('P4', '🦖 T-Rex Bank Card')" class="bg-purple-950/60 hover:bg-purple-900/80 border border-purple-700/50 text-purple-200 font-mono text-[10px] py-1.5 rounded font-bold uppercase tracking-wider transition-all">P4 T-Rex</button>
+                            <button onclick="emulateScan('P1', '🛩️ White Plane Card')" class="bg-slate-800/80 hover:bg-slate-700 text-slate-100 border border-slate-600/50 font-mono text-[10px] py-2 rounded font-bold text-center shadow">🛩️ Plane</button>
+                            <button onclick="emulateScan('P2', '🚢 Blue Boat Card')" class="bg-blue-950/60 hover:bg-blue-900/80 border border-blue-700/50 text-blue-200 font-mono text-[10px] py-2 rounded font-bold text-center shadow">🚢 Boat</button>
+                            <button onclick="emulateScan('P3', '🚗 Red Car Card')" class="bg-red-950/60 hover:bg-red-900/80 border border-red-700/50 text-red-200 font-mono text-[10px] py-2 rounded font-bold text-center shadow">🚗 Car</button>
+                            <button onclick="emulateScan('P4', '🛸 Green Heli Card')" class="bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-700/50 text-emerald-200 font-mono text-[10px] py-2 rounded font-bold text-center shadow">🛸 Heli</button>
                         </div>
                     </div>
 
                     <div>
-                        <span class="text-[10px] uppercase font-bold text-gray-400 block mb-1">Scan Title Deed Properties:</span>
-                        <div class="grid grid-cols-4 gap-1">
-                            <button onclick="emulateScan('BR1', 'Brown Set: Med. Ave')" class="bg-amber-900/40 hover:bg-amber-900/60 text-amber-200 border border-amber-800/40 font-mono text-[9px] py-1 rounded">BR1</button>
-                            <button onclick="emulateScan('BR2', 'Brown Set: Baltic')" class="bg-amber-900/40 hover:bg-amber-900/60 text-amber-200 border border-amber-800/40 font-mono text-[9px] py-1 rounded">BR2</button>
-                            <button onclick="emulateScan('LB1', 'Blue Set: Oriental')" class="bg-sky-900/40 hover:bg-sky-900/60 text-sky-200 border border-sky-800/40 font-mono text-[9px] py-1 rounded">LB1</button>
-                            <button onclick="emulateScan('LB2', 'Blue Set: Vermont')" class="bg-sky-900/40 hover:bg-sky-900/60 text-sky-200 border border-sky-800/40 font-mono text-[9px] py-1 rounded">LB2</button>
-                            <button onclick="emulateScan('PK1', 'Pink Set: St. Charles')" class="bg-pink-900/40 hover:bg-pink-900/60 text-pink-200 border border-pink-800/40 font-mono text-[9px] py-1 rounded">PK1</button>
-                            <button onclick="emulateScan('OR1', 'Orange Set: St. James')" class="bg-orange-900/40 hover:bg-orange-900/60 text-orange-200 border border-orange-800/40 font-mono text-[9px] py-1 rounded">OR1</button>
-                            <button onclick="emulateScan('RD1', 'Red Set: Kentucky')" class="bg-red-900/40 hover:bg-red-900/60 text-red-200 border border-red-800/40 font-mono text-[9px] py-1 rounded">RD1</button>
-                            <button onclick="emulateScan('DB2', 'Blue Set: Boardwalk')" class="bg-indigo-900/40 hover:bg-indigo-900/60 text-indigo-200 border border-indigo-800/40 font-mono text-[9px] py-1 rounded">DB2</button>
+                        <span class="text-[10px] uppercase font-bold text-gray-400 block mb-1">Scan Board Deeds (Clockwise H1-H22):</span>
+                        <div class="grid grid-cols-6 gap-1 max-h-24 overflow-y-auto pr-0.5">
+                            <button onclick="emulateScan('H1', 'Mediterranean Ave')" class="bg-amber-900/40 text-amber-200 text-[9px] py-1 rounded font-mono">H1</button>
+                            <button onclick="emulateScan('H2', 'Baltic Ave')" class="bg-amber-900/40 text-amber-200 text-[9px] py-1 rounded font-mono">H2</button>
+                            <button onclick="emulateScan('H3', 'Oriental Ave')" class="bg-sky-900/40 text-sky-200 text-[9px] py-1 rounded font-mono">H3</button>
+                            <button onclick="emulateScan('H4', 'Vermont Ave')" class="bg-sky-900/40 text-sky-200 text-[9px] py-1 rounded font-mono">H4</button>
+                            <button onclick="emulateScan('H5', 'Connecticut Ave')" class="bg-sky-900/40 text-sky-200 text-[9px] py-1 rounded font-mono">H5</button>
+                            <button onclick="emulateScan('H6', 'St. Charles Place')" class="bg-pink-900/40 text-pink-200 text-[9px] py-1 rounded font-mono">H6</button>
+                            <button onclick="emulateScan('H7', 'States Ave')" class="bg-pink-900/40 text-pink-200 text-[9px] py-1 rounded font-mono">H7</button>
+                            <button onclick="emulateScan('H8', 'Virginia Ave')" class="bg-pink-900/40 text-pink-200 text-[9px] py-1 rounded font-mono">H8</button>
+                            <button onclick="emulateScan('H9', 'St. James Place')" class="bg-orange-900/40 text-orange-200 text-[9px] py-1 rounded font-mono">H9</button>
+                            <button onclick="emulateScan('H10', 'Tennessee Ave')" class="bg-orange-900/40 text-orange-200 text-[9px] py-1 rounded font-mono">H10</button>
+                            <button onclick="emulateScan('H11', 'New York Ave')" class="bg-orange-900/40 text-orange-200 text-[9px] py-1 rounded font-mono">H11</button>
+                            <button onclick="emulateScan('H12', 'Kentucky Ave')" class="bg-red-900/40 text-red-200 text-[9px] py-1 rounded font-mono">H12</button>
+                            <button onclick="emulateScan('H13', 'Indiana Ave')" class="bg-red-900/40 text-red-200 text-[9px] py-1 rounded font-mono">H13</button>
+                            <button onclick="emulateScan('H14', 'Illinois Ave')" class="bg-red-900/40 text-red-200 text-[9px] py-1 rounded font-mono">H14</button>
+                            <button onclick="emulateScan('H15', 'Atlantic Ave')" class="bg-yellow-900/40 text-yellow-200 text-[9px] py-1 rounded font-mono">H15</button>
+                            <button onclick="emulateScan('H16', 'Ventnor Ave')" class="bg-yellow-900/40 text-yellow-200 text-[9px] py-1 rounded font-mono">H16</button>
+                            <button onclick="emulateScan('H17', 'Marvin Gardens')" class="bg-yellow-900/40 text-yellow-200 text-[9px] py-1 rounded font-mono">H17</button>
+                            <button onclick="emulateScan('H18', 'Pacific Ave')" class="bg-emerald-900/40 text-emerald-200 text-[9px] py-1 rounded font-mono">H18</button>
+                            <button onclick="emulateScan('H19', 'North Carolina Ave')" class="bg-emerald-900/40 text-emerald-200 text-[9px] py-1 rounded font-mono">H19</button>
+                            <button onclick="emulateScan('H20', 'Pennsylvania Ave')" class="bg-emerald-900/40 text-emerald-200 text-[9px] py-1 rounded font-mono">H20</button>
+                            <button onclick="emulateScan('H21', 'Park Place')" class="bg-indigo-900/40 text-indigo-200 text-[9px] py-1 rounded font-mono">H21</button>
+                            <button onclick="emulateScan('H22', 'Boardwalk')" class="bg-indigo-900/40 text-indigo-200 text-[9px] py-1 rounded font-mono">H22</button>
                         </div>
                     </div>
                 </div>
@@ -107,13 +117,11 @@
             <div class="bg-gray-800 p-5 rounded-2xl border-4 border-gray-700 shadow-xl flex flex-col h-full justify-between">
                 <div>
                     <div class="flex justify-between items-center mb-2 border-b border-gray-700 pb-1">
-                        <h2 class="text-sm font-bold text-gray-200 uppercase tracking-wide flex items-center gap-1.5">
-                            📝 Hardware Log
-                        </h2>
-                        <button onclick="clearAuditLogs()" class="text-[9px] text-gray-400 hover:text-red-400 uppercase font-mono tracking-tighter">Wipe Terminal</button>
+                        <h2 class="text-sm font-bold text-gray-200 uppercase tracking-wide">📝 Core Action Log</h2>
+                        <button onclick="clearAuditLogs()" class="text-[9px] text-gray-400 hover:text-red-400 font-mono uppercase">Wipe Terminal</button>
                     </div>
                     <div id="terminal-log-box" class="log-terminal text-[10px] text-emerald-400 bg-gray-950 p-3 rounded-xl border border-gray-800 h-64 overflow-y-auto space-y-1.5 shadow-inner">
-                        <div>[00:00:00] INT_SYS_INIT // Core system processing online. Awaiting card scans...</div>
+                        <div>[00:00:00] INT_SYS_INIT // Console initialized. Tracking sequential codes H1 to H22.</div>
                     </div>
                 </div>
             </div>
@@ -124,84 +132,84 @@
                 Active Financial Ledger
             </h2>
             <div id="player-ledger-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="col-span-full text-center py-6 text-gray-500 italic text-xs">
-                    Roster unpopulated. Use the Scan matrix commands above to activate system profiles.
-                </div>
+                <div class="col-span-full text-center py-6 text-gray-500 italic text-xs">Roster unpopulated. Use Scan matrix above to activate player accounts.</div>
             </div>
         </div>
     </div>
 
     <script>
-        const GAME = {
-            phase: 'SETUP',
-            activePlayers: {},
-            playerOrder: [],
-            pendingProperty: null,
-            streamInstance: null
-        };
+        const GAME = { phase: 'SETUP', activePlayers: {}, playerOrder: [], pendingProperty: null, streamInstance: null };
 
+        // Complete 22 Title Deed Matrix mapped directly to clockwise sequential numbering (H1-H22)
         const PROPERTY_REGISTRY = {
-            'BR1': { name: 'Mediterranean Ave', cost: 60, rent: [2, 10, 30, 90, 160, 250], lvl: 1 },
-            'BR2': { name: 'Baltic Ave', cost: 60, rent: [4, 20, 60, 180, 320, 450], lvl: 1 },
-            'LB1': { name: 'Oriental Ave', cost: 100, rent: [6, 30, 90, 270, 400, 550], lvl: 1 },
-            'LB2': { name: 'Vermont Ave', cost: 100, rent: [6, 30, 90, 270, 400, 550], lvl: 1 },
-            'PK1': { name: 'St. Charles Place', cost: 140, rent: [10, 50, 150, 450, 625, 750], lvl: 1 },
-            'OR1': { name: 'St. James Place', cost: 180, rent: [14, 70, 200, 550, 750, 950], lvl: 1 },
-            'RD1': { name: 'Kentucky Ave', cost: 220, rent: [18, 90, 250, 700, 875, 1050], lvl: 1 },
-            'DB2': { name: 'Boardwalk', cost: 400, rent: [50, 200, 600, 1400, 1700, 2000], lvl: 1 }
+            'H1':  { name: 'Mediterranean Ave', cost: 60, rent: [2, 10, 30, 90, 160], lvl: 1 },
+            'H2':  { name: 'Baltic Ave', cost: 60, rent: [4, 20, 60, 180, 320], lvl: 1 },
+            'H3':  { name: 'Oriental Ave', cost: 100, rent: [6, 30, 90, 270, 550], lvl: 1 },
+            'H4':  { name: 'Vermont Ave', cost: 100, rent: [6, 30, 90, 270, 550], lvl: 1 },
+            'H5':  { name: 'Connecticut Ave', cost: 120, rent: [8, 40, 100, 300, 600], lvl: 1 },
+            'H6':  { name: 'St. Charles Place', cost: 140, rent: [10, 50, 150, 450, 750], lvl: 1 },
+            'H7':  { name: 'States Ave', cost: 140, rent: [10, 50, 150, 450, 750], lvl: 1 },
+            'H8':  { name: 'Virginia Ave', cost: 160, rent: [12, 60, 180, 500, 900], lvl: 1 },
+            'H9':  { name: 'St. James Place', cost: 180, rent: [14, 70, 200, 550, 950], lvl: 1 },
+            'H10': { name: 'Tennessee Ave', cost: 180, rent: [14, 70, 200, 550, 950], lvl: 1 },
+            'H11': { name: 'New York Ave', cost: 200, rent: [16, 80, 220, 600, 1000], lvl: 1 },
+            'H12': { name: 'Kentucky Ave', cost: 220, rent: [18, 90, 250, 700, 1050], lvl: 1 },
+            'H13': { name: 'Indiana Ave', cost: 220, rent: [18, 90, 250, 700, 1050], lvl: 1 },
+            'H14': { name: 'Illinois Ave', cost: 240, rent: [20, 100, 300, 750, 1100], lvl: 1 },
+            'H15': { name: 'Atlantic Ave', cost: 260, rent: [22, 110, 330, 800, 1150], lvl: 1 },
+            'H16': { name: 'Ventnor Ave', cost: 260, rent: [22, 110, 330, 800, 1150], lvl: 1 },
+            'H17': { name: 'Marvin Gardens', cost: 280, rent: [24, 120, 360, 850, 1200], lvl: 1 },
+            'H18': { name: 'Pacific Ave', cost: 300, rent: [26, 130, 390, 900, 1270], lvl: 1 },
+            'H19': { name: 'North Carolina Ave', cost: 300, rent: [26, 130, 390, 900, 1270], lvl: 1 },
+            'H20': { name: 'Pennsylvania Ave', cost: 320, rent: [28, 150, 450, 1000, 1400], lvl: 1 },
+            'H21': { name: 'Park Place', cost: 350, rent: [35, 175, 500, 1100, 1500], lvl: 1 },
+            'H22': { name: 'Boardwalk', cost: 400, rent: [50, 200, 600, 1400, 2000], lvl: 1 }
         };
 
+        // Box Accurate 4 Token Data Layer
         const PLAYER_PROFILES = {
-            'P1': { id: 'P1', name: 'Player 1', token: '🚗 Racecar', balance: 1500, properties: [], status: 'Active' },
-            'P2': { id: 'P2', name: 'Player 2', token: '🚢 Luxury Ship', balance: 1500, properties: [], status: 'Active' },
-            'P3': { id: 'P3', name: 'Player 3', token: '🛩️ Private Jet', balance: 1500, properties: [], status: 'Active' },
-            'P4': { id: 'P4', name: 'Player 4', token: '🦖 Silver T-Rex', balance: 1500, properties: [], status: 'Active' }
+            'P1': { id: 'P1', name: 'Player 1', token: '🛩️ White Plane', balance: 1500, properties: [], status: 'Active' },
+            'P2': { id: 'P2', name: 'Player 2', token: '🚢 Blue Boat', balance: 1500, properties: [], status: 'Active' },
+            'P3': { id: 'P3', name: 'Player 3', token: '🚗 Red Car', balance: 1500, properties: [], status: 'Active' },
+            'P4': { id: 'P4', name: 'Player 4', token: '🛸 Green Helicopter', balance: 1500, properties: [], status: 'Active' }
         };
 
-        // --- CORE SYSTEM SCAN EMULATOR CONTEXT ---
         function emulateScan(code, label) {
-            // Flash laser visual status
             const laser = document.getElementById('scan-laser');
             laser.innerText = "SCAN HIT!";
-            laser.className = "text-[10px] font-mono bg-red-600 text-white px-1.5 py-0.5 rounded animate-bounce";
-            
+            laser.className = "text-[10px] font-mono bg-red-600 text-white px-1.5 py-0.5 rounded animate-pulse";
             setTimeout(() => {
                 laser.innerText = "LASER IDLE";
                 laser.className = "text-[10px] font-mono bg-gray-900 text-gray-400 px-1.5 py-0.5 rounded";
             }, 800);
 
-            logTerminalAction(`SCANNER READSUCCESS // ID: [${code}] -> "${label}"`);
+            logTerminalAction(`SCANNER SUCCESS // ID: [${code}] -> "${label}"`);
             processEventString(code);
         }
 
-        // --- HARDWARE TIME LOGGER MODULE ---
         function logTerminalAction(msg) {
             const container = document.getElementById('terminal-log-box');
             const now = new Date();
-            const timeStr = now.toTimeString().split(' ')[0]; // Returns "HH:MM:SS" absolute format
-            
+            const timeStr = now.toTimeString().split(' ')[0];
             const logRow = document.createElement('div');
             logRow.innerHTML = `<span class="text-gray-500">[${timeStr}]</span> ${msg}`;
             container.appendChild(logRow);
-            container.scrollTop = container.scrollHeight; // Keep view locked to the newest line
+            container.scrollTop = container.scrollHeight;
         }
 
         function clearAuditLogs() {
-            document.getElementById('terminal-log-box').innerHTML = `<div>[${new Date().toTimeString().split(' ')[0]}] TERMINAL DATA PURGED // Awaiting events...</div>`;
+            document.getElementById('terminal-log-box').innerHTML = `<div>[${new Date().toTimeString().split(' ')[0]}] TERMINAL FLUSH COMPLETE // Standby...</div>`;
         }
 
-        // --- NATIVE SMARTPHONE USER CAMERA SETUP ---
         async function initCameraHardware() {
             const video = document.getElementById('camera-stream');
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "environment" }
-                });
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
                 GAME.streamInstance = stream;
                 video.srcObject = stream;
-                logTerminalAction("CAMERA_SYS // Hardware camera lens channel online.");
+                logTerminalAction("CAMERA_SYS // Barcode/QR optical tracker lens active.");
             } catch (err) {
-                logTerminalAction("CAMERA_ERR // Direct media channel blocked or unsecure context.");
+                logTerminalAction("CAMERA_ERR // Direct hardware lens locked or running local context.");
             }
         }
 
@@ -215,17 +223,16 @@
         function handleSetupPhase(code) {
             if (PLAYER_PROFILES[code]) {
                 if (GAME.activePlayers[code]) {
-                    logTerminalAction(`WARN // Registration target "${PLAYER_PROFILES[code].name}" already loaded.`);
+                    logTerminalAction(`WARN // Card "${PLAYER_PROFILES[code].token}" is already registered in setup pool.`);
                     return;
                 }
                 GAME.activePlayers[code] = JSON.parse(JSON.stringify(PLAYER_PROFILES[code]));
                 GAME.playerOrder.push(code);
-                logTerminalAction(`REGISTRY // Loaded profile: ${PLAYER_PROFILES[code].name} (${PLAYER_PROFILES[code].token})`);
-                updateLCD("REGISTRATION", `PLAYER ${GAME.playerOrder.length} OK`, `${GAME.activePlayers[code].token} verified. Press ✓ to lock game.`);
+                logTerminalAction(`REGISTRY // Connected Bank Card: ${PLAYER_PROFILES[code].token}`);
+                updateLCD("REGISTRATION", `SLOT ${GAME.playerOrder.length} OK`, `${GAME.activePlayers[code].token} Registered! Press ✓ to begin game.`);
                 document.getElementById('lcd-footer').innerText = `Roster: ${GAME.playerOrder.length}/4 Active`;
             } else {
-                logTerminalAction(`FAIL // Code [${code}] not valid during registration.`);
-                updateLCD("SETUP REJECTED", "INVALID ID CARD", "Scan Player tokens first");
+                updateLCD("SETUP BLOCK", "SCAN VALID CARD", "Awaiting official user token authentication.");
             }
         }
 
@@ -236,20 +243,20 @@
                 GAME.phase = 'TRANSACTION';
 
                 if (!owner) {
-                    logTerminalAction(`DEED // Asset target "${GAME.pendingProperty.name}" is unowned.`);
-                    updateLCD("PROPERTY DEED", "UNOWNED", `${GAME.pendingProperty.name}: $${GAME.pendingProperty.cost}. Scan bank card to buy.`);
+                    logTerminalAction(`DEED // ${GAME.pendingProperty.name} (${code}) is unowned.`);
+                    updateLCD("DEED OPEN", "UNOWNED", `${GAME.pendingProperty.name}: $${GAME.pendingProperty.cost}. Scan bank card to buy.`);
                 } else {
                     const currentRent = GAME.pendingProperty.rent[GAME.pendingProperty.lvl - 1];
-                    logTerminalAction(`RENT // Asset belongs to ${owner.name}. Rent Level: ${GAME.pendingProperty.lvl} ($${currentRent})`);
-                    updateLCD("RENT ACCRUED", owner.name, `Due: $${currentRent}. Scan renter card to pay.`);
+                    logTerminalAction(`RENT ACCRUAL // Owner: ${owner.token}. Level ${GAME.pendingProperty.lvl} rent total: $${currentRent}`);
+                    updateLCD("RENT LEVY", owner.name, `Rent Owed: $${currentRent}. Scan renter's bank card.`);
                 }
             }
         }
 
         function handleTransactionPhase(code) {
             if (!GAME.activePlayers[code]) {
-                logTerminalAction(`FAIL // Transaction cancelled: [${code}] is not a registered player.`);
-                updateLCD("TX FAULT", "BAD ACCOUNT ID", "Scan valid player card to clear context.");
+                logTerminalAction(`TX REJECTED // Code [${code}] not an active registered account.`);
+                updateLCD("TX FAULT", "INVALID CARD", "Scan valid bank card.");
                 return;
             }
 
@@ -260,76 +267,102 @@
                 if (player.balance >= GAME.pendingProperty.cost) {
                     player.balance -= GAME.pendingProperty.cost;
                     player.properties.push(GAME.pendingProperty);
-                    logTerminalAction(`TX_COMPLETE // ${player.name} bought ${GAME.pendingProperty.name} for $${GAME.pendingProperty.cost}.`);
-                    updateLCD("PURCHASE FIXED", player.name, `Acquired ${GAME.pendingProperty.name}!`);
+                    logTerminalAction(`TX_SUCCESS // ${player.token} bought ${GAME.pendingProperty.name} (-$${GAME.pendingProperty.cost}).`);
+                    updateLCD("DEED CLAIMED", player.name, `Acquired ${GAME.pendingProperty.name}`);
                 } else {
-                    logTerminalAction(`TX_DECLINED // ${player.name} lacks funds for ${GAME.pendingProperty.name}.`);
-                    updateLCD("TX DECLINED", "LOW BALANCE", "Insufficient cash liquidity.");
+                    logTerminalAction(`TX_DENIED // ${player.token} has insufficient funds.`);
+                    updateLCD("TX DECLINED", "LOW BALANCE", "Transaction denied.");
                 }
             } else {
                 if (owner.id === player.id) {
-                    // Level up property because the owner landed on it
                     GAME.pendingProperty.lvl = Math.min(5, GAME.pendingProperty.lvl + 1);
-                    // Sync internal data
                     let pRef = owner.properties.find(p => p.id === GAME.pendingProperty.id);
                     if(pRef) pRef.lvl = GAME.pendingProperty.lvl;
 
-                    logTerminalAction(`UPGRADE // ${player.name} landed on their own asset. "${GAME.pendingProperty.name}" upgraded to Level ${GAME.pendingProperty.lvl}.`);
-                    updateLCD("DEED LEVELED UP", `LEVEL ${GAME.pendingProperty.lvl}`, `Rent limits spiked on ${GAME.pendingProperty.name}!`);
+                    logTerminalAction(`LEVEL_UP // Owner landed on self. ${GAME.pendingProperty.name} increased to Lvl ${GAME.pendingProperty.lvl}.`);
+                    updateLCD("DEED UPGRADED", `LEVEL ${GAME.pendingProperty.lvl}`, `Rent boosted on ${GAME.pendingProperty.name}`);
                 } else {
-                    // Pay rent process
                     const rent = GAME.pendingProperty.rent[GAME.pendingProperty.lvl - 1];
                     player.balance -= rent;
                     owner.balance += rent;
 
-                    // Level up property because rent was processed successfully
                     GAME.pendingProperty.lvl = Math.min(5, GAME.pendingProperty.lvl + 1);
                     let pRef = owner.properties.find(p => p.id === GAME.pendingProperty.id);
                     if(pRef) pRef.lvl = GAME.pendingProperty.lvl;
 
-                    logTerminalAction(`RENT_TRANSFER // $${rent} shifted from ${player.name} to ${owner.name}.`);
-                    updateLCD("RENT SETTLED", "TRANSFER OK", `${player.name} paid $${rent} to ${owner.name}. Asset increased to Level ${GAME.pendingProperty.lvl}.`);
+                    logTerminalAction(`RENT_PAID // $${rent} from ${player.token} to ${owner.token}.`);
+                    updateLCD("RENT SETTLED", "TRANSFER OK", `${player.name} paid $${rent} to ${owner.name}.`);
+                    
+                    if (player.balance < 0) {
+                        logTerminalAction(`BANKRUPTCY // ${player.token} has run out of funds!`);
+                        processBankruptcyEnd();
+                    }
                 }
             }
             GAME.phase = 'ROAMING';
             GAME.pendingProperty = null;
         }
 
+        function processBankruptcyEnd() {
+            GAME.phase = 'FINISHED';
+            let winner = null;
+            let highestNet = -1;
+
+            logTerminalAction("CRITICAL // Sudden Death Bankruptcy triggered. Final values calculated below:");
+            
+            GAME.playerOrder.forEach(pId => {
+                const p = GAME.activePlayers[pId];
+                let propertyValueSum = p.properties.reduce((sum, prop) => sum + prop.cost, 0);
+                let netWorth = p.balance + propertyValueSum;
+                
+                logTerminalAction(`FINAL ACCOUNT // ${p.token}: $${p.balance} Cash + $${propertyValueSum} Property = NetWorth: $${netWorth}`);
+                
+                if (netWorth > highestNet) {
+                    highestNet = netWorth;
+                    winner = p;
+                }
+            });
+
+            logTerminalAction(`VICTORY // Winner confirmed: ${winner.token} wins with a net worth of $${highestNet}! 🏆`);
+            updateLCD("GAME FINISHED", "WINNER DISCOVERED", `${winner.token} wins with $${highestNet}!`);
+        }
+
         function injectManualString() {
             const el = document.getElementById('manual-string');
             const clean = el.value.trim().toUpperCase();
             if (!clean) return;
-            logTerminalAction(`OVERRIDE // Manual string string injection event: "${clean}"`);
+            logTerminalAction(`OVERRIDE // Processing code: "${clean}"`);
             processEventString(clean);
             el.value = "";
         }
 
+        // Action controls
         function handleHardwareButton(action) {
             if (action === 'confirm' && GAME.phase === 'SETUP' && GAME.playerOrder.length > 0) {
                 GAME.phase = 'ROAMING';
-                logTerminalAction("SYS_STATUS // Hardware setup locked. Game state shifted to ROAMING.");
-                updateLCD("GAME ACTIVE", "UNIT ONLINE", "Roster locked. Select tracking cards above.");
+                logTerminalAction("SYS_STATUS // Console config locked. Let's play!");
+                updateLCD("GAME ACTIVE", "UNIT ONLINE", "Roster locked. Scan tracking keys.");
             } else if (action === 'cancel') {
                 GAME.phase = GAME.playerOrder.length > 0 ? 'ROAMING' : 'SETUP';
                 GAME.pendingProperty = null;
-                logTerminalAction("SYS_RESET // Pending operation stack cleared by master override.");
-                updateLCD("STACK RESET", "STANDBY", "Pending operations dropped cleanly.");
+                logTerminalAction("SYS_RESET // Action aborted by master escape key.");
+                updateLCD("STACK RESET", "STANDBY", "Awaiting card scan sequence...");
             }
             updateLedgerUI();
         }
 
         function triggerPassGo(id) {
             GAME.activePlayers[id].balance += 200;
-            logTerminalAction(`SALARY // ${GAME.activePlayers[id].name} processed Pass Go bonus (+$200).`);
-            updateLCD("PASS GO (+200)", GAME.activePlayers[id].name, `Balance total is now $${GAME.activePlayers[id].balance}`);
+            logTerminalAction(`SALARY // ${GAME.activePlayers[id].token} parsed Pass Go (+$200).`);
+            updateLCD("PASS GO (+200)", GAME.activePlayers[id].name, `Account Balance: $${GAME.activePlayers[id].balance}`);
             updateLedgerUI();
         }
 
         function triggerJailToggle(id) {
             const p = GAME.activePlayers[id];
             p.status = p.status === 'In Jail' ? 'Active' : 'In Jail';
-            logTerminalAction(`STATUS_SHIFT // ${p.name} updated standing to: "${p.status}".`);
-            updateLCD(p.status === 'In Jail' ? "JAIL COMMIT" : "JAIL RELEASE", p.name, `Standing shifted to ${p.status}`);
+            logTerminalAction(`STATUS_SHIFT // ${p.token} detention updated to: "${p.status}".`);
+            updateLCD(p.status === 'In Jail' ? "JAIL COMMIT" : "JAIL RELEASE", p.name, "Standing updated.");
             updateLedgerUI();
         }
 
@@ -343,24 +376,21 @@
             const container = document.getElementById('player-ledger-grid');
             container.innerHTML = "";
             if (GAME.playerOrder.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center py-6 text-gray-500 italic text-xs">Roster unpopulated. Use the Scan matrix commands above to activate system profiles.</div>`;
+                container.innerHTML = `<div class="col-span-full text-center py-6 text-gray-500 italic text-xs">Roster unpopulated. Use Scan matrix above to activate player accounts.</div>`;
                 return;
             }
             GAME.playerOrder.forEach(pId => {
                 const player = GAME.activePlayers[pId];
-                let opts = player.properties.length === 0 
-                    ? `<option>No deeds owned</option>` 
-                    : player.properties.map(p => `<option>${p.name} (Lvl ${p.lvl})</option>`).join('');
-
+                let opts = player.properties.length === 0 ? `<option>No properties owned</option>` : player.properties.map(p => `<option>${p.name} (Lvl ${p.lvl})</option>`).join('');
                 const card = document.createElement('div');
                 card.className = `p-4 rounded-xl border-2 flex flex-col justify-between space-y-4 shadow ${player.status === 'In Jail' ? 'bg-red-950/40 border-red-900' : 'bg-gray-700/50 border-gray-600'}`;
                 card.innerHTML = `
                     <div>
                         <div class="flex justify-between items-start">
-                            <h3 class="font-black text-base text-white">${player.name}</h3>
+                            <h3 class="font-black text-sm text-white">${player.name}</h3>
                             <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${player.status === 'In Jail' ? 'bg-red-600' : 'bg-emerald-600'}">${player.status}</span>
                         </div>
-                        <p class="text-[10px] text-gray-400 font-mono">${player.token}</p>
+                        <p class="text-[10px] text-gray-300 font-mono font-medium">${player.token}</p>
                         <div class="my-2 text-xl font-black text-emerald-400 font-mono">$${player.balance}</div>
                         <select class="w-full bg-gray-900 border border-gray-600 text-[11px] rounded-lg px-2 py-1 focus:outline-none text-gray-200">${opts}</select>
                     </div>

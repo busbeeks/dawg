@@ -1,1 +1,427 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monopoly Ultimate Banking Unit</title>
+    <!-- Tailwind CSS for sleek styling -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Html5Qrcode Library for robust camera scanning -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        .lcd-screen {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #9bbc0f;
+            color: #0f380f;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col items-center py-8 px-4">
+
+    <div class="max-w-4xl w-full space-y-8">
+        <header class="text-center">
+            <h1 class="text-3xl font-extrabold tracking-wider text-red-500 uppercase">Ultimate Banking Unit</h1>
+            <p class="text-gray-400 text-sm mt-1">Camera Fix + Player Ledger Management Edition</p>
+        </header>
+
+        <!-- MAIN BANKING APPARATUS GRID -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- LEFT COLUMN: PHYSICAL UNIT EMULATION -->
+            <div class="bg-gray-800 p-6 rounded-2xl border-4 border-gray-700 shadow-2xl flex flex-col space-y-6">
+                
+                <!-- LCD Screen Display -->
+                <div class="lcd-screen w-full p-4 rounded-lg border-4 border-inset border-gray-900 h-40 flex flex-col justify-between shadow-inner">
+                    <div class="flex justify-between items-center text-xs font-bold border-b border-emerald-900 pb-1">
+                        <span id="lcd-state">SETUP PHASE</span>
+                        <span id="lcd-substate">SCAN P1</span>
+                    </div>
+                    <div id="lcd-main" class="text-center text-2xl font-black my-auto tracking-wide uppercase">
+                        Scan Player 1 Card
+                    </div>
+                    <div id="lcd-footer" class="text-right text-xs font-bold">
+                        Players: 0/4
+                    </div>
+                </div>
+
+                <!-- Hardware Buttons -->
+                <div class="grid grid-cols-3 gap-4">
+                    <button onclick="handleHardwareButton('cancel')" class="bg-red-600 hover:bg-red-500 text-white font-bold py-4 rounded-xl shadow-lg border-b-4 border-red-800 active:border-b-0 active:mt-1 transition-all text-xl">X</button>
+                    <button onclick="handleHardwareButton('deal')" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl shadow-lg border-b-4 border-blue-800 active:border-b-0 active:mt-1 transition-all text-sm uppercase">Deal / Auction</button>
+                    <button onclick="handleHardwareButton('confirm')" class="bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl shadow-lg border-b-4 border-green-800 active:border-b-0 active:mt-1 transition-all text-xl">✓</button>
+                </div>
+
+                <!-- Manual Code Injection Textbox -->
+                <div class="bg-gray-750 p-4 rounded-xl border border-gray-700">
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Manual Injection String</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="manual-string" placeholder="e.g., CARD_P1, PROP_B2" class="bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-red-500 flex-grow font-mono uppercase">
+                        <button onclick="injectManualString()" class="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg font-bold text-sm uppercase tracking-wider">Inject</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: ROBUST CAMERA SCANNER -->
+            <div class="bg-gray-800 p-6 rounded-2xl border-4 border-gray-700 shadow-2xl flex flex-col justify-between">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-200 mb-2 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></span> Hardware Scanner Input
+                    </h2>
+                    <p class="text-xs text-gray-400 mb-4">Point your card's barcode directly at the camera frame below.</p>
+                    
+                    <!-- Fixed Scanner Viewport -->
+                    <div class="relative bg-black rounded-xl overflow-hidden border-2 border-gray-600 aspect-video w-full flex items-center justify-center">
+                        <div id="qr-reader" class="w-full h-full"></div>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex gap-2">
+                    <button onclick="startScanner()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-2 rounded-lg flex-grow uppercase tracking-wider">Start/Reset Camera</button>
+                    <button onclick="stopScanner()" class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs font-bold px-3 py-2 rounded-lg uppercase tracking-wider">Kill Feed</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- LOWER SECTION: DYNAMIC LEDGER & PLAYER INVENTORIES -->
+        <div class="bg-gray-800 p-6 rounded-2xl border-4 border-gray-700 shadow-2xl">
+            <h2 class="text-xl font-black text-gray-200 mb-6 tracking-wide uppercase border-b border-gray-700 pb-2 flex justify-between items-center">
+                <span>Player Ledger &amp; Property Inventories</span>
+                <span class="text-xs font-normal text-gray-400 lowercase">click items to view details</span>
+            </h2>
+
+            <div id="player-ledger-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Javascript will inject player profile containers here in real-time -->
+                <div class="col-span-full text-center py-8 text-gray-500 italic">
+                    No active players registered yet. Inject or scan a player card above to populate the interactive ledger.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CORE BUSINESS LOGIC APPARATUS -->
+    <script>
+        // Game State Engine
+        const GAME = {
+            phase: 'SETUP', // 'SETUP', 'ROAMING', 'TRANSACTION', 'AUCTION'
+            activePlayers: {},
+            playerOrder: [],
+            totalPlayersExpected: 4,
+            currentScannedCard: null,
+            pendingProperty: null,
+            html5QrCode: null
+        };
+
+        // Complete Property Reference Registry
+        const PROPERTY_REGISTRY = {
+            'PROP_M1': { name: 'Mediterranean Ave', cost: 60, rent: [2, 10, 30, 90, 160, 250], color: 'bg-amber-800' },
+            'PROP_M2': { name: 'Baltic Ave', cost: 60, rent: [4, 20, 60, 180, 320, 450], color: 'bg-amber-800' },
+            'PROP_O1': { name: 'Oriental Ave', cost: 100, rent: [6, 30, 90, 270, 400, 550], color: 'bg-sky-400' },
+            'PROP_O2': { name: 'Vermont Ave', cost: 100, rent: [6, 30, 90, 270, 400, 550], color: 'bg-sky-400' },
+            'PROP_O3': { name: 'Connecticut Ave', cost: 120, rent: [8, 40, 100, 300, 450, 600], color: 'bg-sky-400' },
+            'PROP_P1': { name: 'St. Charles Place', cost: 140, rent: [10, 50, 150, 450, 625, 750], color: 'bg-pink-500' },
+            'PROP_P2': { name: 'States Ave', cost: 140, rent: [10, 50, 150, 450, 625, 750], color: 'bg-pink-500' },
+            'PROP_P3': { name: 'Virginia Ave', cost: 160, rent: [12, 60, 180, 500, 700, 900], color: 'bg-pink-500' },
+            'PROP_O4': { name: 'St. James Place', cost: 180, rent: [14, 70, 200, 550, 750, 950], color: 'bg-orange-500' },
+            'PROP_O5': { name: 'Tennessee Ave', cost: 180, rent: [14, 70, 200, 550, 750, 950], color: 'bg-orange-500' },
+            'PROP_O6': { name: 'New York Ave', cost: 200, rent: [16, 80, 220, 600, 800, 1000], color: 'bg-orange-500' },
+            'PROP_R1': { name: 'Kentucky Ave', cost: 220, rent: [18, 90, 250, 700, 875, 1050], color: 'bg-red-600' },
+            'PROP_R2': { name: 'Indiana Ave', cost: 220, rent: [18, 90, 250, 700, 875, 1050], color: 'bg-red-600' },
+            'PROP_R3': { name: 'Illinois Ave', cost: 240, rent: [20, 100, 300, 750, 925, 1100], color: 'bg-red-600' },
+            'PROP_Y1': { name: 'Atlantic Ave', cost: 260, rent: [22, 110, 330, 800, 975, 1150], color: 'bg-yellow-500' },
+            'PROP_Y2': { name: 'Ventnor Ave', cost: 260, rent: [22, 110, 330, 800, 975, 1150], color: 'bg-yellow-500' },
+            'PROP_Y3': { name: 'Marvin Gardens', cost: 280, rent: [24, 120, 360, 850, 1025, 1200], color: 'bg-yellow-500' },
+            'PROP_G1': { name: 'Pacific Ave', cost: 300, rent: [26, 130, 390, 900, 1100, 1275], color: 'bg-emerald-600' },
+            'PROP_G2': { name: 'North Carolina Ave', cost: 300, rent: [26, 130, 390, 900, 1100, 1275], color: 'bg-emerald-600' },
+            'PROP_G3': { name: 'Pennsylvania Ave', cost: 320, rent: [28, 150, 450, 1000, 1200, 1400], color: 'bg-emerald-600' },
+            'PROP_B1': { name: 'Park Place', cost: 350, rent: [35, 175, 500, 1100, 1300, 1500], color: 'bg-blue-700' },
+            'PROP_B2': { name: 'Boardwalk', cost: 400, rent: [50, 200, 600, 1400, 1700, 2000], color: 'bg-blue-700' }
+        };
+
+        const PLAYER_PROFILES = {
+            'CARD_P1': { id: 'CARD_P1', name: 'Player 1', token: '🚗 Red Car', balance: 1500, properties: [], status: 'Active' },
+            'CARD_P2': { id: 'CARD_P2', name: 'Player 2', token: '🚢 Blue Ship', balance: 1500, properties: [], status: 'Active' },
+            'CARD_P3': { id: 'CARD_P3', name: 'Player 3', token: '🛩️ Yellow Plane', balance: 1500, properties: [], status: 'Active' },
+            'CARD_P4': { id: 'CARD_P4', name: 'Player 4', token: '🦖 Silver T-Rex', balance: 1500, properties: [], status: 'Active' }
+        };
+
+        // --- CAMERA SCANNER SYSTEM (FIXED & REWRITTEN FOR STABILITY) ---
+        async function startScanner() {
+            try {
+                // Step 1: Forcefully terminate any existing instance safely
+                if (GAME.html5QrCode) {
+                    await stopScanner();
+                }
+
+                // Step 2: Ensure canvas element clean target exists
+                document.getElementById('qr-reader').innerHTML = "";
+                
+                // Step 3: Initialize tracking client
+                GAME.html5QrCode = new Html5Qrcode("qr-reader");
+                
+                const config = { 
+                    fps: 15, 
+                    qrbox: (width, height) => {
+                        return { width: Math.floor(width * 0.8), height: Math.floor(height * 0.6) };
+                    }
+                };
+
+                // Use user-facing or back-facing device camera cleanly
+                await GAME.html5QrCode.start(
+                    { facingMode: "environment" }, 
+                    config, 
+                    onScanSuccess, 
+                    onScanFailure
+                );
+                
+                updateLCD("CAMERA ONLINE", "READY FOR CARD", "Awaiting Scan...");
+            } catch (err) {
+                console.error("Camera access failed:", err);
+                updateLCD("SCANNER ERROR", "TRY MANUAL INJECT", "Check Permissions");
+            }
+        }
+
+        async function stopScanner() {
+            if (GAME.html5QrCode) {
+                try {
+                    if (GAME.html5QrCode.isScanning) {
+                        await GAME.html5QrCode.stop();
+                    }
+                } catch (err) {
+                    console.warn("Error stopping scanner instance cleanly:", err);
+                } finally {
+                    GAME.html5QrCode = null;
+                    document.getElementById('qr-reader').innerHTML = "";
+                }
+            }
+        }
+
+        function onScanSuccess(decodedText) {
+            // Clean values and inject matching string rules
+            const sanitizedText = decodedText.trim().toUpperCase();
+            document.getElementById('manual-string').value = sanitizedText;
+            processEventString(sanitizedText);
+        }
+
+        function onScanFailure(error) {
+            // Suppress continuous passive canvas parsing noise in standard debug logs
+        }
+
+        // --- CODE PROCESSING ENGINE ---
+        function injectManualString() {
+            const inputField = document.getElementById('manual-string');
+            const targetString = inputField.value.trim().toUpperCase();
+            if (!targetString) return;
+            processEventString(targetString);
+            inputField.value = ""; // clear field safely after process
+        }
+
+        function processEventString(code) {
+            if (GAME.phase === 'SETUP') {
+                handleSetupPhase(code);
+            } else if (GAME.phase === 'ROAMING') {
+                handleRoamingPhase(code);
+            } else if (GAME.phase === 'TRANSACTION') {
+                handleTransactionPhase(code);
+            }
+            updateLedgerUI();
+        }
+
+        // Phase 1: Registration Core
+        function handleSetupPhase(code) {
+            if (PLAYER_PROFILES[code]) {
+                if (GAME.activePlayers[code]) {
+                    updateLCD("REGISTRATION", "DUPLICATE", `${PLAYER_PROFILES[code].name} already joined!`);
+                    return;
+                }
+                GAME.activePlayers[code] = JSON.parse(JSON.stringify(PLAYER_PROFILES[code]));
+                GAME.playerOrder.push(code);
+                
+                const currentCount = GAME.playerOrder.length;
+                updateLCD(
+                    "SETUP PHASE", 
+                    `PLAYER ${currentCount} OK`, 
+                    `${GAME.activePlayers[code].token} Registered! Press ✓ to play.`
+                );
+                document.getElementById('lcd-footer').innerText = `Players: ${currentCount}/4`;
+            } else {
+                updateLCD("SETUP FAULT", "INVALID CARD", "Register players first!");
+            }
+        }
+
+        // Phase 2: Board Browsing Engine
+        function handleRoamingPhase(code) {
+            if (PROPERTY_REGISTRY[code]) {
+                GAME.pendingProperty = { id: code, ...PROPERTY_REGISTRY[code] };
+                
+                // Track current master ownership
+                let owner = null;
+                for (let pId in GAME.activePlayers) {
+                    if (GAME.activePlayers[pId].properties.some(p => p.id === code)) {
+                        owner = GAME.activePlayers[pId];
+                        break;
+                    }
+                }
+
+                if (!owner) {
+                    GAME.phase = 'TRANSACTION';
+                    updateLCD("PROPERTY VIEW", "UNOWNED", `${GAME.pendingProperty.name}: $${GAME.pendingProperty.cost}. Scan Buyer Card or press X.`);
+                } else {
+                    GAME.phase = 'TRANSACTION';
+                    updateLCD("RENT DUE", owner.name, `${GAME.pendingProperty.name}. Scan Renters Bank Card.`);
+                }
+            } else {
+                updateLCD("UNIT READY", "ROAMING MODE", "Scan any Property card or Event to proceed.");
+            }
+        }
+
+        // Phase 3: Financial Settlement Engine
+        function handleTransactionPhase(code) {
+            if (!PLAYER_PROFILES[code] || !GAME.activePlayers[code]) {
+                updateLCD("TX ERROR", "INVALID BANK ID", "Please scan a valid registered player card.");
+                return;
+            }
+
+            const activePlayer = GAME.activePlayers[code];
+            let owner = null;
+            for (let pId in GAME.activePlayers) {
+                if (GAME.activePlayers[pId].properties.some(p => p.id === GAME.pendingProperty.id)) {
+                    owner = GAME.activePlayers[pId];
+                    break;
+                }
+            }
+
+            // Case A: Buy Action
+            if (!owner) {
+                if (activePlayer.balance >= GAME.pendingProperty.cost) {
+                    activePlayer.balance -= GAME.pendingProperty.cost;
+                    activePlayer.properties.push(GAME.pendingProperty);
+                    updateLCD("PURCHASE COMPLETE", activePlayer.name, `Bought ${GAME.pendingProperty.name} (-$${GAME.pendingProperty.cost})`);
+                    resetToRoaming();
+                } else {
+                    updateLCD("TX DECLINED", "INSUFFICIENT FUNDS", `${activePlayer.name} lacks capital.`);
+                    resetToRoaming();
+                }
+            } 
+            // Case B: Rent Remittance
+            else {
+                if (owner.id === activePlayer.id) {
+                    updateLCD("OWNER PROPERTY", "NO RENT DUE", `${activePlayer.name} owns this land.`);
+                    resetToRoaming();
+                    return;
+                }
+                const rentCost = GAME.pendingProperty.rent[0]; // Baseline level default tier
+                activePlayer.balance -= rentCost;
+                owner.balance += rentCost;
+                updateLCD("RENT SETTLED", "TRANSFER OK", `${activePlayer.name} paid $${rentCost} to ${owner.name}`);
+                resetToRoaming();
+            }
+        }
+
+        // --- HARDWARE BUTTON CONTROL INTERFACES ---
+        function handleHardwareButton(action) {
+            if (action === 'confirm' && GAME.phase === 'SETUP' && GAME.playerOrder.length > 0) {
+                GAME.phase = 'ROAMING';
+                updateLCD("GAME ACTIVE", "UNIT ONLINE", "All systems ready. Scan board locations.");
+            } else if (action === 'cancel') {
+                resetToRoaming();
+                updateLCD("ACTION CANCELLED", "ROAMING", "Unit reset to base scanning mode.");
+            }
+            updateLedgerUI();
+        }
+
+        function resetToRoaming() {
+            if(GAME.phase !== 'SETUP') {
+                GAME.phase = 'ROAMING';
+                GAME.pendingProperty = null;
+            }
+        }
+
+        // --- QUICK BANKING BUTTON COMMANDS ---
+        function triggerPassGo(playerId) {
+            if (!GAME.activePlayers[playerId]) return;
+            GAME.activePlayers[playerId].balance += 200;
+            updateLCD("PASS GO (+200)", GAME.activePlayers[playerId].name, `New Balance: $${GAME.activePlayers[playerId].balance}`);
+            updateLedgerUI();
+        }
+
+        function triggerJailToggle(playerId) {
+            if (!GAME.activePlayers[playerId]) return;
+            const p = GAME.activePlayers[playerId];
+            p.status = p.status === 'In Jail' ? 'Active' : 'In Jail';
+            updateLCD(p.status === 'In Jail' ? "SENT TO JAIL" : "RELEASED FROM JAIL", p.name, `Status altered successfully.`);
+            updateLedgerUI();
+        }
+
+        // --- LCD VISUAL OUTPUT DRIVER ---
+        function updateLCD(state, substate, mainText) {
+            document.getElementById('lcd-state').innerText = state.toUpperCase();
+            document.getElementById('lcd-substate').innerText = substate.toUpperCase();
+            document.getElementById('lcd-main').innerText = mainText;
+        }
+
+        // --- DYNAMIC INVENTORY & LEDGER UI ---
+        function updateLedgerUI() {
+            const gridContainer = document.getElementById('player-ledger-grid');
+            gridContainer.innerHTML = "";
+
+            if (GAME.playerOrder.length === 0) {
+                gridContainer.innerHTML = `
+                    <div class="col-span-full text-center py-8 text-gray-500 italic">
+                        No active players registered yet. Inject or scan a player card above to populate the interactive ledger.
+                    </div>`;
+                return;
+            }
+
+            GAME.playerOrder.forEach(pId => {
+                const player = GAME.activePlayers[pId];
+                
+                // Compute options elements for dropdown list view safely
+                let optionsMarkup = player.properties.length === 0 
+                    ? `<option class="text-gray-500">None (No deeds scanned)</option>`
+                    : player.properties.map(p => `<option class="bg-gray-800 text-white">${p.name} ($${p.cost})</option>`).join('');
+
+                const playerCard = document.createElement('div');
+                playerCard.className = `p-4 rounded-xl border-2 flex flex-col justify-between space-y-4 shadow-md transition-all ${player.status === 'In Jail' ? 'bg-red-950/40 border-red-900' : 'bg-gray-700/50 border-gray-600'}`;
+                
+                playerCard.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-black text-lg text-white tracking-wide">${player.name}</h3>
+                            <span class="text-xs px-2 py-0.5 rounded font-bold uppercase ${player.status === 'In Jail' ? 'bg-red-600 text-white animate-pulse' : 'bg-emerald-600 text-white'}">${player.status}</span>
+                        </div>
+                        <p class="text-xs text-gray-400 font-mono mt-0.5">${player.token}</p>
+                        
+                        <div class="my-3 text-2xl font-black font-mono tracking-wider text-emerald-400">
+                            $${player.balance}
+                        </div>
+
+                        <!-- Dropdown Element Array showcasing Owned Deeds -->
+                        <div class="mt-2">
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Deeds Tracked (${player.properties.length})</label>
+                            <select class="w-full bg-gray-900 border border-gray-600 text-xs rounded-lg px-2 py-1.5 focus:outline-none text-gray-200 font-medium cursor-pointer">
+                                ${optionsMarkup}
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Instant Event Actions -->
+                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-gray-600/50">
+                        <button onclick="triggerPassGo('${pId}')" class="bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-[11px] py-2 px-1 rounded-md uppercase tracking-wider transition-colors shadow">⚡ Pass GO</button>
+                        <button onclick="triggerJailToggle('${pId}')" class="bg-amber-700 hover:bg-amber-600 text-white font-bold text-[11px] py-2 px-1 rounded-md uppercase tracking-wider transition-colors shadow">⚖️ Jail Toggle</button>
+                    </div>
+                `;
+                gridContainer.appendChild(playerCard);
+            });
+        }
+
+        // Initialize display configuration on body compilation
+        window.addEventListener('DOMContentLoaded', () => {
+            updateLedgerUI();
+            // Start engine automatically if permissions exist
+            startScanner();
+        });
+    </script>
+</body>
+</html>

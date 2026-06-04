@@ -16,13 +16,19 @@
         .log-terminal {
             font-family: 'Courier New', Courier, monospace;
         }
-        /* Ensure the scanner container scales smoothly */
+        /* Lock scanner dimensions so frames don't distort */
         #qr-reader {
+            width: 100% !important;
+            background: #000 !important;
             border: none !important;
         }
-        #qr-reader video {
-            object-fit: cover !important;
-            border-radius: 0.75rem;
+        #qr-reader__dashboard_section_csr button {
+            background-color: #ef4444 !important;
+            color: white !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 0.375rem !important;
+            font-weight: bold !important;
+            margin-top: 10px !important;
         }
     </style>
 </head>
@@ -31,7 +37,7 @@
     <div class="max-w-7xl w-full space-y-6">
         <header class="text-center">
             <h1 class="text-3xl font-extrabold tracking-wider text-red-600 uppercase">Ultimate Banking Unit</h1>
-            <p class="text-gray-400 text-xs mt-1">Live Optical Code Reader Engine Connected</p>
+            <p class="text-gray-400 text-xs mt-1">Hardware Lens Auto-Parser Engine</p>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -40,10 +46,10 @@
                 <div class="lcd-screen w-full p-4 rounded-lg border-4 border-inset border-gray-900 h-36 flex flex-col justify-between shadow-inner">
                     <div class="flex justify-between items-center text-[10px] font-bold border-b border-emerald-900 pb-0.5">
                         <span id="lcd-state">SETUP PHASE</span>
-                        <span id="lcd-substate">AWAITING CARD</span>
+                        <span id="lcd-substate">AWAITING LENS INITIALIZATION</span>
                     </div>
-                    <div id="lcd-main" class="text-center text-lg font-black my-auto tracking-wide uppercase leading-tight">
-                        Hold Card to Camera Lens
+                    <div id="lcd-main" class="text-center text-sm font-black my-auto tracking-wide uppercase leading-tight">
+                        Tap "Start Live Scanner" to activate camera feed
                     </div>
                     <div id="lcd-footer" class="text-right text-[10px] font-bold">
                         Roster: 0/4 Active
@@ -58,7 +64,7 @@
 
                 <div class="bg-gray-750 p-3 rounded-xl border border-gray-700 text-xs">
                     <div class="flex gap-2">
-                        <input type="text" id="manual-string" placeholder="Type directly (e.g. P1, H12)" class="bg-gray-900 border border-gray-600 rounded-lg px-3 py-1.5 focus:outline-none focus:border-red-500 flex-grow font-mono uppercase text-white">
+                        <input type="text" id="manual-string" placeholder="Fallback typing (e.g. P1, H1)" class="bg-gray-900 border border-gray-600 rounded-lg px-3 py-1.5 focus:outline-none focus:border-red-500 flex-grow font-mono uppercase text-white">
                         <button onclick="injectManualString()" class="bg-gray-600 hover:bg-gray-500 px-3 py-1.5 rounded-lg font-bold uppercase tracking-wider">Inject</button>
                     </div>
                 </div>
@@ -66,23 +72,25 @@
 
             <div class="bg-gray-800 p-5 rounded-2xl border-4 border-gray-700 shadow-xl flex flex-col justify-between space-y-4">
                 <div>
-                    <div class="flex justify-between items-center mb-2">
+                    <div class="flex justify-between items-center mb-3">
                         <h2 class="text-sm font-bold text-gray-200 flex items-center gap-2">
-                            <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span> Live Optical Lens
+                            <span id="lens-indicator-dot" class="w-2.5 h-2.5 rounded-full bg-gray-600"></span> 
+                            Camera Viewport Window
                         </h2>
-                        <span id="scan-laser" class="text-[10px] font-mono bg-gray-900 text-gray-400 px-1.5 py-0.5 rounded transition-colors">DECODER ACTIVE</span>
+                        <span id="scan-laser" class="text-[10px] font-mono bg-gray-900 text-gray-400 px-1.5 py-0.5 rounded">LENS SHUTTER CLOSED</span>
                     </div>
                     
-                    <div class="relative bg-black rounded-xl overflow-hidden border border-gray-600 aspect-video w-full flex items-center justify-center shadow-inner">
-                        <div id="qr-reader" class="w-full h-full"></div>
+                    <div class="bg-black rounded-xl overflow-hidden border border-gray-600 min-h-[200px] flex flex-col items-center justify-center p-2">
+                        <div id="qr-reader" class="w-full"></div>
+                        <button id="start-scan-btn" onclick="startCameraScanner()" class="mt-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 px-5 rounded-xl uppercase tracking-wider transition-colors shadow">
+                            📷 Start Live Scanner
+                        </button>
                     </div>
                 </div>
 
-                <div class="bg-gray-900 p-3 rounded-xl border border-gray-700">
-                    <p class="text-[11px] text-gray-400 leading-relaxed">
-                        <strong class="text-gray-200 block uppercase mb-1">🔍 Automatic Recognition Rules</strong>
-                        Hold any game card square up to your lens. The processor automatically extracts code identifiers (<code class="text-red-400">P1-P4</code> for Bank Tokens, <code class="text-sky-400">H1-H22</code> for Title Deeds) and submits them cleanly without confirmation prompts.
-                    </p>
+                <div class="bg-gray-900 p-3 rounded-xl border border-gray-700 text-[11px] text-gray-400">
+                    <span class="text-gray-200 font-bold block mb-1 uppercase">💡 Scanning Tips:</span>
+                    When the camera turns on, align the small barcode/QR area found on your physical card directly within the center square guidelines.
                 </div>
             </div>
 
@@ -93,7 +101,7 @@
                         <button onclick="clearAuditLogs()" class="text-[9px] text-gray-400 hover:text-red-400 font-mono uppercase">Wipe Terminal</button>
                     </div>
                     <div id="terminal-log-box" class="log-terminal text-[10px] text-emerald-400 bg-gray-950 p-3 rounded-xl border border-gray-800 h-64 overflow-y-auto space-y-1.5 shadow-inner">
-                        <div>[00:00:00] INT_SYS_INIT // Scanner initialized. Camera listening for valid matrices...</div>
+                        <div>[00:00:00] INT_SYS_INIT // System ready. Prompt mobile device for hardware camera initialization.</div>
                     </div>
                 </div>
             </div>
@@ -104,13 +112,13 @@
                 Active Financial Ledger
             </h2>
             <div id="player-ledger-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="col-span-full text-center py-6 text-gray-500 italic text-xs">Roster unpopulated. Hold a Player Card up to camera or type its code to start.</div>
+                <div class="col-span-full text-center py-6 text-gray-500 italic text-xs">Roster unpopulated. Fire up camera and map cards.</div>
             </div>
         </div>
     </div>
 
     <script>
-        const GAME = { phase: 'SETUP', activePlayers: {}, playerOrder: [], pendingProperty: null, lastScanTime: 0 };
+        const GAME = { phase: 'SETUP', activePlayers: {}, playerOrder: [], pendingProperty: null, lastScanTime: 0, scannerInstance: null };
 
         const PROPERTY_REGISTRY = {
             'H1':  { name: 'Mediterranean Ave', cost: 60, rent: [2, 10, 30, 90, 160], lvl: 1 },
@@ -131,7 +139,7 @@
             'H16': { name: 'Ventnor Ave', cost: 260, rent: [22, 110, 330, 800, 1150], lvl: 1 },
             'H17': { name: 'Marvin Gardens', cost: 280, rent: [24, 120, 360, 850, 1200], lvl: 1 },
             'H18': { name: 'Pacific Ave', cost: 300, rent: [26, 130, 390, 900, 1270], lvl: 1 },
-            'H19': { name: 'North Carolina Ave', cost: 300, rent: [26, 130, 390, 900, 1270], lvl: 1 },
+            'H19': { name: 'North Carolina Ave', cost: 300, text: 'H19', cost: 300, rent: [26, 130, 390, 900, 1270], lvl: 1 },
             'H20': { name: 'Pennsylvania Ave', cost: 320, rent: [28, 150, 450, 1000, 1400], lvl: 1 },
             'H21': { name: 'Park Place', cost: 350, rent: [35, 175, 500, 1100, 1500], lvl: 1 },
             'H22': { name: 'Boardwalk', cost: 400, rent: [50, 200, 600, 1400, 2000], lvl: 1 }
@@ -144,59 +152,65 @@
             'P4': { id: 'P4', name: 'Player 4', token: '🛸 Green Helicopter', balance: 1500, properties: [], status: 'Active' }
         };
 
-        function flashLaserNotification(code) {
-            const laser = document.getElementById('scan-laser');
-            laser.innerText = `READ SUCCESS [${code}]`;
-            laser.className = "text-[10px] font-mono bg-red-600 text-white px-1.5 py-0.5 rounded animate-pulse";
-            setTimeout(() => {
-                laser.innerText = "DECODER ACTIVE";
-                laser.className = "text-[10px] font-mono bg-gray-900 text-gray-400 px-1.5 py-0.5 rounded";
-            }, 1000);
-        }
+        // Tap-to-activate camera handler to comply with browser privacy rules
+        function startCameraScanner() {
+            document.getElementById('start-scan-btn').style.display = 'none';
+            logTerminalAction("CAMERA_REQ // Requesting permission stream...");
 
-        function logTerminalAction(msg) {
-            const container = document.getElementById('terminal-log-box');
-            const now = new Date();
-            const timeStr = now.toTimeString().split(' ')[0];
-            const logRow = document.createElement('div');
-            logRow.innerHTML = `<span class="text-gray-500">[${timeStr}]</span> ${msg}`;
-            container.appendChild(logRow);
-            container.scrollTop = container.scrollHeight;
-        }
+            // Configure parser to support standard 1D barcodes and QR structures
+            GAME.scannerInstance = new Html5Qrcode("qr-reader");
+            
+            const config = { 
+                fps: 20, 
+                qrbox: function(width, height) {
+                    return { width: Math.floor(width * 0.8), height: Math.floor(height * 0.6) };
+                },
+                formatsToSupport: [ 
+                    Html5QrcodeSupportedFormats.QR_CODE, 
+                    Html5QrcodeSupportedFormats.CODE_128,
+                    Html5QrcodeSupportedFormats.CODE_39,
+                    Html5QrcodeSupportedFormats.EAN_8,
+                    Html5QrcodeSupportedFormats.EAN_13
+                ]
+            };
 
-        function clearAuditLogs() {
-            document.getElementById('terminal-log-box').innerHTML = `<div>[${new Date().toTimeString().split(' ')[0]}] TERMINAL FLUSH COMPLETE...</div>`;
-        }
-
-        // Live Optical Decoding Engine Setup
-        function initScannerHardware() {
-            const html5QrCode = new Html5Qrcode("qr-reader");
-            const config = { fps: 15, qrbox: (width, height) => { return { width: Math.min(width, height) * 0.75, height: Math.min(width, height) * 0.75 }; } };
-
-            html5QrCode.start(
+            GAME.scannerInstance.start(
                 { facingMode: "environment" }, 
                 config,
                 (decodedText) => {
-                    // Prevent crazy multi-scans in the exact same second
                     const now = Date.now();
-                    if (now - GAME.lastScanTime > 1500) { 
+                    if (now - GAME.lastScanTime > 1800) { 
                         GAME.lastScanTime = now;
                         processEventString(decodedText);
                     }
                 },
-                (errorMessage) => {
-                    // Quiet debug logging to prevent performance lag
-                }
-            ).catch(err => {
-                logTerminalAction("SCANNER_WARN // Check video tracking permissions or camera setup.");
+                (error) => { /* Suppress continuous polling warnings */ }
+            ).then(() => {
+                logTerminalAction("CAMERA_ONLINE // Shutter completely open. Feed visible on device display.");
+                document.getElementById('lens-indicator-dot').className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
+                document.getElementById('scan-laser').innerText = "TRACKING ACTIVE";
+                updateLCD("SETUP PHASE", "SCAN TOKEN", "Hold player token card directly in front of camera lens.");
+            }).catch(err => {
+                logTerminalAction(`HARDWARE_FAULT // Failed opening track stream. Reason: ${err}`);
+                document.getElementById('start-scan-btn').style.display = 'block';
             });
         }
 
+        function flashLaserNotification(code) {
+            const laser = document.getElementById('scan-laser');
+            laser.innerText = `READ: [${code}]`;
+            laser.className = "text-[10px] font-mono bg-red-600 text-white px-1.5 py-0.5 rounded animate-pulse";
+            setTimeout(() => {
+                laser.innerText = "TRACKING ACTIVE";
+                laser.className = "text-[10px] font-mono bg-gray-900 text-gray-400 px-1.5 py-0.5 rounded";
+            }, 1200);
+        }
+
         function processEventString(code) {
-            // Cleans strings cleanly to isolate any raw keywords hidden inside bar or QR texts
             let cleanCode = code.trim().toUpperCase();
-            
-            // Extract core IDs directly if embedded inside full URLs/strings
+            logTerminalAction(`DECODER_RAW // Data captured: "${cleanCode}"`);
+
+            // Regex parsing to catch raw strings embedded inside standard commercial scanning blocks
             if (cleanCode.includes("P1")) cleanCode = "P1";
             else if (cleanCode.includes("P2")) cleanCode = "P2";
             else if (cleanCode.includes("P3")) cleanCode = "P3";
@@ -222,11 +236,11 @@
                 }
                 GAME.activePlayers[code] = JSON.parse(JSON.stringify(PLAYER_PROFILES[code]));
                 GAME.playerOrder.push(code);
-                logTerminalAction(`REGISTRY // Registered Card: ${PLAYER_PROFILES[code].token}`);
-                updateLCD("REGISTRATION", `SLOT ${GAME.playerOrder.length} OK`, `${PLAYER_PROFILES[code].token} Connected! Press ✓ when everyone is ready.`);
+                logTerminalAction(`REGISTRY // Registered Account Asset: ${PLAYER_PROFILES[code].token}`);
+                updateLCD("REGISTRATION", `ROSTER SLOT ${GAME.playerOrder.length} OK`, `${PLAYER_PROFILES[code].token} verified! Press Checkmark Button (✓) to lock pool.`);
                 document.getElementById('lcd-footer').innerText = `Roster: ${GAME.playerOrder.length}/4 Active`;
             } else {
-                updateLCD("SETUP FAULT", "BAD DEED CODE", "Scan player cards (P1-P4) during setup phase.");
+                updateLCD("SETUP FAULT", "INVALID TOKEN", "Scan a real player card asset (P1-P4) to begin registry setup.");
             }
         }
 
@@ -237,20 +251,20 @@
                 GAME.phase = 'TRANSACTION';
 
                 if (!owner) {
-                    logTerminalAction(`DEED SCAN // ${GAME.pendingProperty.name} (${code}) is unowned.`);
-                    updateLCD("DEED OPEN", "UNOWNED", `${GAME.pendingProperty.name}: $${GAME.pendingProperty.cost}. Scan Buyer's Bank Card.`);
+                    logTerminalAction(`DEED MATCH // ${GAME.pendingProperty.name} (${code}) is currently unowned.`);
+                    updateLCD("DEED OPEN", "AVAILABLE", `${GAME.pendingProperty.name}: costs $${GAME.pendingProperty.cost}. Show Buyer's Bank Card to purchase.`);
                 } else {
                     const currentRent = GAME.pendingProperty.rent[GAME.pendingProperty.lvl - 1];
-                    logTerminalAction(`RENT ACCRUAL // Owner: ${owner.token}. Current Level ${GAME.pendingProperty.lvl} Rent: $${currentRent}`);
-                    updateLCD("RENT LEVY", owner.name, `Rent Owed: $${currentRent}. Scan Renter's Bank Card.`);
+                    logTerminalAction(`RENT DETECTED // Title Deed Owner: ${owner.token}. Tier Level ${GAME.pendingProperty.lvl} Rent Fee: $${currentRent}`);
+                    updateLCD("RENT LEVY", owner.name, `Owed: $${currentRent}. Show landing Player's Bank Card.`);
                 }
             }
         }
 
         function handleTransactionPhase(code) {
             if (!GAME.activePlayers[code]) {
-                logTerminalAction(`TX REJECTED // Code [${code}] not an active player. Resetting event branch.`);
-                updateLCD("TX ABORTED", "INVALID CARD", "Awaiting fresh location trigger.");
+                logTerminalAction(`TX REJECTED // Code [${code}] not inside active player roster. Transaction dropped.`);
+                updateLCD("TX ABORTED", "UNKNOWN ACCOUNT", "Awaiting fresh location command.");
                 GAME.phase = 'ROAMING';
                 GAME.pendingProperty = null;
                 return;
@@ -263,11 +277,11 @@
                 if (player.balance >= GAME.pendingProperty.cost) {
                     player.balance -= GAME.pendingProperty.cost;
                     player.properties.push(GAME.pendingProperty);
-                    logTerminalAction(`PROPERTIES // ${player.token} purchased ${GAME.pendingProperty.name} for $${GAME.pendingProperty.cost}.`);
-                    updateLCD("DEED CLAIMED", player.name, `Acquired ${GAME.pendingProperty.name}`);
+                    logTerminalAction(`SUCCESS // ${player.token} bought ${GAME.pendingProperty.name} for $${GAME.pendingProperty.cost}.`);
+                    updateLCD("DEED CLAIMED", player.name, `Bought ${GAME.pendingProperty.name}`);
                 } else {
-                    logTerminalAction(`PROPERTIES // ${player.token} has insufficient funds.`);
-                    updateLCD("TX DECLINED", "LOW BALANCE", "Transaction denied.");
+                    logTerminalAction(`DENIED // ${player.token} lacked matching ledger funds.`);
+                    updateLCD("TX DECLINED", "LOW BALANCE", "ledger insufficient.");
                 }
             } else {
                 if (owner.id === player.id) {
@@ -275,8 +289,8 @@
                     let pRef = owner.properties.find(p => p.id === GAME.pendingProperty.id);
                     if(pRef) pRef.lvl = GAME.pendingProperty.lvl;
 
-                    logTerminalAction(`DEVELOPMENT // ${player.token} upgraded self-owned ${GAME.pendingProperty.name} to Level ${GAME.pendingProperty.lvl}.`);
-                    updateLCD("DEED UPGRADED", `LEVEL ${GAME.pendingProperty.lvl}`, `Rent boosted on ${GAME.pendingProperty.name}`);
+                    logTerminalAction(`UPGRADE // ${player.token} landed on self-owned space. ${GAME.pendingProperty.name} boosted to Lvl ${GAME.pendingProperty.lvl}.`);
+                    updateLCD("DEED UPGRADED", `LEVEL ${GAME.pendingProperty.lvl}`, `Rent increased on ${GAME.pendingProperty.name}`);
                 } else {
                     const rent = GAME.pendingProperty.rent[GAME.pendingProperty.lvl - 1];
                     player.balance -= rent;
@@ -286,11 +300,11 @@
                     let pRef = owner.properties.find(p => p.id === GAME.pendingProperty.id);
                     if(pRef) pRef.lvl = GAME.pendingProperty.lvl;
 
-                    logTerminalAction(`FINANCES // Rent Paid: $${rent} from ${player.token} to ${owner.token}.`);
-                    updateLCD("RENT SETTLED", "TRANSFER OK", `${player.name} paid $${rent} to ${owner.name}.`);
+                    logTerminalAction(`TRANSFER // Rent $${rent} processed from ${player.token} -> ${owner.token}.`);
+                    updateLCD("RENT SETTLED", "TRANSFER OK", `${player.name} transferred $${rent} to ${owner.name}.`);
                     
                     if (player.balance < 0) {
-                        logTerminalAction(`BANKRUPTCY // ${player.token} went under.`);
+                        logTerminalAction(`CRITICAL // Bankruptcy condition triggered on ${player.token}.`);
                         processBankruptcyEnd();
                     }
                 }
@@ -304,23 +318,20 @@
             let winner = null;
             let highestNet = -1;
 
-            logTerminalAction("CRITICAL // Sudden Death Bankruptcy condition achieved. Calculating final scores:");
-            
+            logTerminalAction("CRITICAL // Final accounting ledger balance checklist:");
             GAME.playerOrder.forEach(pId => {
                 const p = GAME.activePlayers[pId];
                 let propertyValueSum = p.properties.reduce((sum, prop) => sum + prop.cost, 0);
                 let netWorth = p.balance + propertyValueSum;
-                
-                logTerminalAction(`FINAL BALANCES // ${p.token}: Cash ($${p.balance}) + Properties ($${propertyValueSum}) = Net Worth: $${netWorth}`);
-                
+                logTerminalAction(`LEDGER MATCH // ${p.token}: Cash ($${p.balance}) + Deeds ($${propertyValueSum}) = Total: $${netWorth}`);
                 if (netWorth > highestNet) {
                     highestNet = netWorth;
                     winner = p;
                 }
             });
 
-            logTerminalAction(`VICTORY // Winner confirmed: ${winner.token} wins with $${highestNet}! 🏆`);
-            updateLCD("GAME FINISHED", "WINNER DISCOVERED", `${winner.token} wins with $${highestNet}!`);
+            logTerminalAction(`VICTORY // Winner: ${winner.token} wins with an accumulated valuation of $${highestNet}! 🏆`);
+            updateLCD("GAME OVER", "WINNER FOUND", `${winner.token} wins with $${highestNet}!`);
         }
 
         function injectManualString() {
@@ -333,5 +344,85 @@
         function handleHardwareButton(action) {
             if (action === 'confirm' && GAME.phase === 'SETUP' && GAME.playerOrder.length > 0) {
                 GAME.phase = 'ROAMING';
-                logTerminalAction("SYS_STATUS // Registration locked. Scanner running live roaming protocol.");
-                updateLCD("GAME ACTIVE", "UNIT ONLINE", "Roster locked. Scan
+                logTerminalAction("SYS_STATUS // Console config locked. Game roaming sequence operational.");
+                updateLCD("GAME ACTIVE", "UNIT ONLINE", "Roster confirmed. Scan property cards clockwise.");
+            } else if (action === 'cancel') {
+                GAME.phase = GAME.playerOrder.length > 0 ? 'ROAMING' : 'SETUP';
+                GAME.pendingProperty = null;
+                logTerminalAction("SYS_RESET // Action buffer cleared.");
+                updateLCD("STACK RESET", "STANDBY", "Awaiting active barcode feed scan...");
+            }
+            updateLedgerUI();
+        }
+
+        function triggerPassGo(id) {
+            GAME.activePlayers[id].balance += 200;
+            logTerminalAction(`FINANCES // ${GAME.activePlayers[id].token} passed GO (+$200).`);
+            updateLCD("PASS GO (+200)", GAME.activePlayers[id].name, `Account Balance: $${GAME.activePlayers[id].balance}`);
+            updateLedgerUI();
+        }
+
+        function triggerJailToggle(id) {
+            const p = GAME.activePlayers[id];
+            p.status = p.status === 'In Jail' ? 'Active' : 'In Jail';
+            logTerminalAction(`STATUS_SHIFT // ${p.token} detention updated to: "${p.status}".`);
+            updateLCD(p.status === 'In Jail' ? "JAIL DETAIN" : "JAIL RELEASE", p.name, "Standing status updated.");
+            updateLedgerUI();
+        }
+
+        function updateLCD(state, substate, mainText) {
+            document.getElementById('lcd-state').innerText = state.toUpperCase();
+            document.getElementById('lcd-substate').innerText = substate.toUpperCase();
+            document.getElementById('lcd-main').innerText = mainText;
+        }
+
+        function logTerminalAction(msg) {
+            const container = document.getElementById('terminal-log-box');
+            const now = new Date();
+            const timeStr = now.toTimeString().split(' ')[0];
+            const logRow = document.createElement('div');
+            logRow.innerHTML = `<span class="text-gray-500">[${timeStr}]</span> ${msg}`;
+            container.appendChild(logRow);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function clearAuditLogs() {
+            document.getElementById('terminal-log-box').innerHTML = `<div>[${new Date().toTimeString().split(' ')[0]}] TERMINAL FLUSH COMPLETE...</div>`;
+        }
+
+        function updateLedgerUI() {
+            const container = document.getElementById('player-ledger-grid');
+            container.innerHTML = "";
+            if (GAME.playerOrder.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-6 text-gray-500 italic text-xs">Roster unpopulated. Fire up camera and map cards.</div>`;
+                return;
+            }
+            GAME.playerOrder.forEach(pId => {
+                const player = GAME.activePlayers[pId];
+                let opts = player.properties.length === 0 ? `<option>No properties owned</option>` : player.properties.map(p => `<option>${p.name} (Lvl ${p.lvl})</option>`).join('');
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-xl border-2 flex flex-col justify-between space-y-4 shadow ${player.status === 'In Jail' ? 'bg-red-950/40 border-red-900' : 'bg-gray-700/50 border-gray-600'}`;
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-black text-sm text-white">${player.name}</h3>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${player.status === 'In Jail' ? 'bg-red-600' : 'bg-emerald-600'}">${player.status}</span>
+                        </div>
+                        <p class="text-[10px] text-gray-300 font-mono font-medium">${player.token}</p>
+                        <div class="my-2 text-xl font-black text-emerald-400 font-mono">$${player.balance}</div>
+                        <select class="w-full bg-gray-900 border border-gray-600 text-[11px] rounded-lg px-2 py-1 focus:outline-none text-gray-200">${opts}</select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5 pt-2 border-t border-gray-600/50">
+                        <button onclick="triggerPassGo('${pId}')" class="bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-[10px] py-1.5 rounded uppercase">⚡ GO</button>
+                        <button onclick="triggerJailToggle('${pId}')" class="bg-amber-700 hover:bg-amber-600 text-white font-bold text-[10px] py-1.5 rounded uppercase">⚖️ Jail</button>
+                    </div>`;
+                container.appendChild(card);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateLedgerUI();
+        });
+    </script>
+</body>
+</html>

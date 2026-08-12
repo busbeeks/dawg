@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Food Database — KAHLID</title>
+  <meta name="description" content="Search a database of common foods and compare calories, protein, carbs and fat per serving.">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <div id="site-nav"></div>
+
+  <header class="page-hero">
+    <div class="container">
+      <p class="breadcrumb-mini"><a href="../index.html">Home</a> / Nutrition / Food Database</p>
+      <h1 class="mt-3">Food <span class="text-orange">Database</span></h1>
+      <p class="lead-lg mt-3">Search common foods and compare their nutrition. All values are per 100g or standard serving.</p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="card-flat mb-4" id="addFoodCard">
+        <h2 class="fs-1-6 mb-3">Add your own food</h2>
+        <p class="text-muted-soft mb-4">Add a custom food and it instantly appears here <strong class="text-lime">and</strong> in the Meal Planner. Saved in your browser.</p>
+        <form id="addFoodForm" novalidate>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="nfName">Food name</label>
+              <input type="text" class="form-control" id="nfName" placeholder="e.g. Protein Bar">
+              <div class="field-error" id="nfNameErr"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="nfCat">Category</label>
+              <select class="form-select" id="nfCat">
+                <option value="protein">Protein</option>
+                <option value="carb">Carbs</option>
+                <option value="fat">Fats</option>
+                <option value="veg">Veg &amp; Fruit</option>
+              </select>
+            </div>
+            <div class="col-6 col-md-3">
+              <label class="form-label" for="nfCal">Calories</label>
+              <input type="number" step="0.1" class="form-control" id="nfCal" placeholder="kcal">
+              <div class="field-error" id="nfCalErr"></div>
+            </div>
+            <div class="col-6 col-md-3">
+              <label class="form-label" for="nfProtein">Protein (g)</label>
+              <input type="number" step="0.1" class="form-control" id="nfProtein" placeholder="g">
+              <div class="field-error" id="nfProteinErr"></div>
+            </div>
+            <div class="col-6 col-md-3">
+              <label class="form-label" for="nfCarbs">Carbs (g)</label>
+              <input type="number" step="0.1" class="form-control" id="nfCarbs" placeholder="g">
+              <div class="field-error" id="nfCarbsErr"></div>
+            </div>
+            <div class="col-6 col-md-3">
+              <label class="form-label" for="nfFat">Fat (g)</label>
+              <input type="number" step="0.1" class="form-control" id="nfFat" placeholder="g">
+              <div class="field-error" id="nfFatErr"></div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-flame mt-3">Add food</button>
+          <span class="text-lime fw-bold ms-3 is-hidden" id="nfThanks">Added — it's now in the table &amp; Meal Planner ✦</span>
+        </form>
+      </div>
+
+      <div class="row g-3 align-items-end mb-4 reveal is-visible">
+        <div class="col-lg-5">
+          <label class="form-label" for="foodSearch">Search foods</label>
+          <input type="search" class="form-control" id="foodSearch" placeholder="Try 'chicken' or 'oats'…">
+        </div>
+        <div class="col-lg-4">
+          <label class="form-label d-block">Category</label>
+          <div class="d-flex flex-wrap gap-2">
+            <button class="chip active" data-cat="all">All</button>
+            <button class="chip" data-cat="protein">Protein</button>
+            <button class="chip" data-cat="carb">Carbs</button>
+            <button class="chip" data-cat="fat">Fats</button>
+            <button class="chip" data-cat="veg">Veg &amp; Fruit</button>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <label class="form-label" for="foodSort">Sort by</label>
+          <select class="form-select" id="foodSort">
+            <option value="name">Name (A–Z)</option>
+            <option value="cal">Calories (high→low)</option>
+            <option value="protein">Protein (high→low)</option>
+          </select>
+        </div>
+      </div>
+      <p class="text-muted-soft" id="foodCount"></p>
+      <div class="card-flat pad-1">
+        <div class="table-responsive">
+          <table class="table-fit">
+            <thead><tr><th>Food</th><th>Calories</th><th>Protein</th><th>Carbs</th><th>Fat</th></tr></thead>
+            <tbody id="foodBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="site-footer"></div>
+  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/food-database.js"></script>
+</body>
+</html>

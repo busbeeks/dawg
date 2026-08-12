@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Testimonials &amp; FAQ — KAHLID</title>
+  <meta name="description" content="Real member reviews with ratings, frequently asked questions and how to contact us.">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <div id="site-nav"></div>
+
+  <header class="page-hero">
+    <div class="container">
+      <p class="breadcrumb-mini"><a href="../index.html">Home</a> / Community / Reviews &amp; FAQ</p>
+      <h1 class="mt-3">Loved by <span class="text-orange">beginners</span></h1>
+      <p class="lead-lg mt-3">Real stories from members who started exactly where you are now.</p>
+    </div>
+  </header>
+
+  <!-- REVIEWS -->
+  <section class="section">
+    <div class="container">
+      <div class="d-flex flex-wrap gap-2 mb-4 reveal is-visible">
+        <button class="chip active" data-star="all">All Reviews</button>
+        <button class="chip" data-star="5">★ 5 only</button>
+        <button class="chip" data-star="4">★ 4 only</button>
+      </div>
+      <div class="row g-4" id="reviewGrid">
+        <div class="col-md-6 col-lg-4 reveal" data-rating="5">
+          <div class="card-flat h-100">
+            <div class="stars mb-2" aria-label="5 out of 5 stars">★★★★★</div>
+            <p>"I'd never touched a weight before. The Build Your Own tool gave me a plan I actually understood. Down 6kg and loving it."</p>
+            <!-- Image from https://images.unsplash.com/photo-1704223523169-52feeed90365 -->
+            <div class="d-flex align-items-center gap-3 mt-3"><img src="../assets/images/trainer-3.jpg" alt="Portrait of member Daniel" class="avatar"><div><strong>Daniel L.</strong><br><small class="text-muted-soft">Member · 4 months</small></div></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4 reveal" data-delay="1" data-rating="5">
+          <div class="card-flat h-100">
+            <div class="stars mb-2" aria-label="5 out of 5 stars">★★★★★</div>
+            <p>"The meal planner finally made macros click for me. No more guessing — I just build my day and go."</p>
+            <div class="d-flex align-items-center gap-3 mt-3"><img src="../assets/images/trainer-1.jpg" alt="Portrait of member Priya" class="avatar"><div><strong>Priya S.</strong><br><small class="text-muted-soft">Member · 7 months</small></div></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4 reveal" data-delay="2" data-rating="4">
+          <div class="card-flat h-100">
+            <div class="stars mb-2" aria-label="4 out of 5 stars">★★★★<span class="off">★</span></div>
+            <p>"Great classes and friendly coaches. Booking was instant. Would love a few more evening slots!"</p>
+            <!-- Image from https://images.unsplash.com/photo-1578924608828-79a71150f711 -->
+            <div class="d-flex align-items-center gap-3 mt-3"><img src="../assets/images/trainer-2.jpg" alt="Portrait of member Marcus" class="avatar"><div><strong>Marcus T.</strong><br><small class="text-muted-soft">Member · 2 months</small></div></div>
+          </div>
+        </div>
+      </div>
+      <p id="reviewEmpty" class="text-center text-muted-soft py-4 is-hidden">No reviews with that rating yet.</p>
+
+      <div class="card-flat mt-5" id="reviewFormCard">
+        <h3 class="fs-1-3 mb-3">Leave a review</h3>
+        <form id="reviewForm" novalidate>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="rvName">Your name</label>
+              <input type="text" class="form-control" id="rvName" placeholder="Your name">
+              <div class="field-error" id="rvNameErr"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label d-block">Your rating</label>
+              <div class="star-input">
+                <input type="radio" name="rvRating" id="rv5" value="5"><label for="rv5" aria-label="5 stars">★</label>
+                <input type="radio" name="rvRating" id="rv4" value="4"><label for="rv4" aria-label="4 stars">★</label>
+                <input type="radio" name="rvRating" id="rv3" value="3"><label for="rv3" aria-label="3 stars">★</label>
+                <input type="radio" name="rvRating" id="rv2" value="2"><label for="rv2" aria-label="2 stars">★</label>
+                <input type="radio" name="rvRating" id="rv1" value="1"><label for="rv1" aria-label="1 star">★</label>
+              </div>
+              <div class="field-error" id="rvRatingErr"></div>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="rvText">Your review</label>
+              <textarea class="form-control" id="rvText" rows="3" placeholder="Share your experience…"></textarea>
+              <div class="field-error" id="rvTextErr"></div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-flame mt-3">Post review</button>
+          <span class="text-lime fw-bold ms-3 is-hidden" id="rvThanks">Thanks — your review is live! ★</span>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section section-ink-2">
+    <div class="container maxw-820">
+      <span class="chapter-no">FAQ</span>
+      <h2 class="mt-3 mb-5 h-3">Questions, answered</h2>
+      <div class="accordion" id="faq">
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q1" aria-expanded="false" aria-controls="q1">Do I need experience to join?</button></h3>
+          <div id="q1" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">Not at all — KAHLID is built for beginners. Every plan starts at an easy level and progresses with you.</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q2" aria-expanded="false" aria-controls="q2">Is the first session really free?</button></h3>
+          <div id="q2" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">Yes. Your intro session with a coach is completely free, with no obligation to sign up afterwards.</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q3" aria-expanded="false" aria-controls="q3">How accurate are the calculators?</button></h3>
+          <div id="q3" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">They use trusted formulas (BMI and Mifflin-St Jeor) as a starting estimate. For medical advice, always consult a professional.</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q4" aria-expanded="false" aria-controls="q4">Can I cancel a booking?</button></h3>
+          <div id="q4" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">Absolutely — cancel or reschedule up to 12 hours before your session at no charge.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section">
+    <div class="container">
+      <div class="row g-5">
+        <div class="col-lg-5 reveal">
+          <span class="chapter-no">Contact</span>
+          <h2 class="mt-3 h-3">Get in touch</h2>
+          <p class="lead-lg mt-3">Have a question we didn't cover? Drop us a message.</p>
+          <ul class="list-unstyled text-muted-soft mt-4 lh-22">
+            <li><strong class="text-lime">Email</strong> · hello@kahlid.example</li>
+            <li><strong class="text-lime">Phone</strong> · +65 6123 4567</li>
+            <li><strong class="text-lime">Studio</strong> · 12 Fitness Ave, Singapore</li>
+          </ul>
+        </div>
+        <div class="col-lg-7 reveal" data-delay="1">
+          <div class="card-flat">
+            <form id="contactForm" novalidate>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label" for="ctName">Name</label>
+                  <input type="text" class="form-control" id="ctName" placeholder="Your name">
+                  <div class="field-error" id="ctNameErr"></div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="ctEmail">Email</label>
+                  <input type="email" class="form-control" id="ctEmail" placeholder="you@email.com">
+                  <div class="field-error" id="ctEmailErr"></div>
+                </div>
+                <div class="col-12">
+                  <label class="form-label" for="ctMessage">Message</label>
+                  <textarea class="form-control" id="ctMessage" rows="4" placeholder="How can we help?"></textarea>
+                  <div class="field-error" id="ctMessageErr"></div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-flame mt-4">Send Message</button>
+            </form>
+            <div class="result-panel is-hidden" id="contactConfirm">
+              <h3 class="text-lime fs-1-8">Message sent ✦</h3>
+              <p class="text-muted-soft mb-0">Thanks for reaching out — we'll reply within one working day.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="site-footer"></div>
+  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/testimonials.js"></script>
+</body>
+</html>

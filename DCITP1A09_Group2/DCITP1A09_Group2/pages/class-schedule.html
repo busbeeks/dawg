@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Class Schedule — KAHLID</title>
+  <meta name="description" content="Weekly class timetable with trainers and availability. Filter by day to plan your week.">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <div id="site-nav"></div>
+
+  <header class="page-hero">
+    <div class="container">
+      <p class="breadcrumb-mini"><a href="../index.html">Home</a> / Community / Schedule</p>
+      <h1 class="mt-3">Class <span class="text-orange">Schedule</span></h1>
+      <p class="lead-lg mt-3">Our weekly group classes. Filter by day, then book your spot in a couple of taps.</p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="d-flex flex-wrap gap-2 mb-4 reveal is-visible">
+        <button class="chip active" data-dayfilter="all">All Days</button>
+        <button class="chip" data-dayfilter="Mon">Mon</button>
+        <button class="chip" data-dayfilter="Tue">Tue</button>
+        <button class="chip" data-dayfilter="Wed">Wed</button>
+        <button class="chip" data-dayfilter="Thu">Thu</button>
+        <button class="chip" data-dayfilter="Fri">Fri</button>
+        <button class="chip" data-dayfilter="Sat">Sat</button>
+      </div>
+
+      <div class="card-flat reveal pad-1">
+        <div class="table-responsive">
+          <table class="table-fit">
+            <thead><tr><th>Day</th><th>Time</th><th>Class</th><th>Trainer</th><th>Spots</th><th></th></tr></thead>
+            <tbody id="scheduleBody">
+              <tr data-day="Mon"><td>Mon</td><td>07:00</td><td>Morning HIIT</td><td>Leon</td><td class="text-lime">6 left</td><td><a href="book-trainer.html" class="btn btn-lime btn-sm">Book</a></td></tr>
+              <tr data-day="Mon"><td>Mon</td><td>18:30</td><td>Strength 101</td><td>Maya</td><td class="text-lime">3 left</td><td><a href="book-trainer.html" class="btn btn-lime btn-sm">Book</a></td></tr>
+              <tr data-day="Tue"><td>Tue</td><td>09:00</td><td>Yoga &amp; Mobility</td><td>Ash</td><td class="text-lime">10 left</td><td><a href="book-trainer.html" class="btn btn-lime btn-sm">Book</a></td></tr>
+              <tr data-day="Tue"><td>Tue</td><td>19:00</td><td>Conditioning</td><td>Leon</td><td class="text-orange">Full</td><td><a href="book-trainer.html" class="btn btn-ghost btn-sm">Waitlist</a></td></tr>
+              <tr data-day="Wed"><td>Wed</td><td>07:00</td><td>Bootcamp</td><td>Maya</td><td class="text-lime">4 left</td><td><a href="book-trainer.html" class="btn btn-lime btn-sm">Book</a></td></tr>
+              <tr data-day="Wed"><td>Wed</td><td>18:30</td><td>Hypertrophy</td><td>Ash</td><td class="text-lime">5 left</td><td><a href="book-trainer.html" class="btn btn-lime btn-sm">Book</a></td></tr>
+              <tr data-day="Thu"><td>Thu</td><td>09:00</td><td>Low-Impact Cardio</td><td>Leon</td><td class="text-lime">8 left</td><td><a href="book-trainer.html" class="btn btn-lime btn-sm">Book</a></td></tr>
+              <tr data-day="Fri"><td>Fri</td><td>18:00</td><td>Friday Burnout</td><td>Maya</td><td class="text-lime">2 left</td><td><a href="book-trainer.html" class="btn btn-lime btn-sm">Book</a></td></tr>
+              <tr data-day="Sat"><td>Sat</td><td>10:00</td><td>Weekend Warrior</td><td>Ash</td><td class="text-lime">12 left</td><td><a href="book-trainer.html" class="btn btn-lime btn-sm">Book</a></td></tr>
+              <tr data-day="Sat"><td>Sat</td><td>11:30</td><td>Beginner Basics</td><td>Maya</td><td class="text-lime">9 left</td><td><a href="book-trainer.html" class="btn btn-lime btn-sm">Book</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p id="scheduleEmpty" class="text-center text-muted-soft py-4 is-hidden">No classes on that day.</p>
+      </div>
+    </div>
+  </section>
+
+  <div id="site-footer"></div>
+  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/class-schedule.js"></script>
+</body>
+</html>

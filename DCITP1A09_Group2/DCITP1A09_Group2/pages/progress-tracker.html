@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Progress Tracker — KAHLID</title>
+  <meta name="description" content="Log your weight, reps and workout duration and watch your progress over time with a simple chart and motivational feedback.">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <div id="site-nav"></div>
+
+  <header class="page-hero">
+    <div class="container">
+      <p class="breadcrumb-mini"><a href="../index.html">Home</a> / Workouts / Progress Tracker</p>
+      <h1 class="mt-3">Progress <span class="text-orange">Tracker</span></h1>
+      <p class="lead-lg mt-3">Log your weight, reps and session length. We'll chart your journey and cheer you on. Saved right in your browser.</p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="row g-5">
+        <div class="col-lg-5">
+          <div class="card-flat">
+            <h2 class="fs-1-6 mb-4">Log a session</h2>
+            <form id="progressForm" novalidate>
+              <div class="mb-3">
+                <label class="form-label" for="pWeight">Body weight (kg)</label>
+                <input type="number" step="0.1" class="form-control" id="pWeight" placeholder="e.g. 70">
+                <div class="field-error" id="pWeightErr"></div>
+              </div>
+              <div class="row g-3">
+                <div class="col-6">
+                  <label class="form-label" for="pReps">Total reps <span class="text-muted-soft">(optional)</span></label>
+                  <input type="number" class="form-control" id="pReps" placeholder="e.g. 60">
+                  <div class="field-error" id="pRepsErr"></div>
+                </div>
+                <div class="col-6">
+                  <label class="form-label" for="pDuration">Duration (min) <span class="text-muted-soft">(optional)</span></label>
+                  <input type="number" class="form-control" id="pDuration" placeholder="e.g. 45">
+                  <div class="field-error" id="pDurationErr"></div>
+                </div>
+              </div>
+              <div class="d-flex gap-3 mt-4">
+                <button type="submit" class="btn btn-flame">Add entry</button>
+                <button type="button" class="btn btn-ghost" id="progressReset">Reset all</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <p class="text-muted-soft" id="progressEmpty">No entries yet — log your first session to start tracking! Your data stays private in this browser.</p>
+          <div id="progressPanel" class="is-hidden">
+            <div class="motivation mb-4" id="progressMsg"></div>
+            <div class="card-flat mb-4">
+              <h3 class="fs-1-3 mb-2">Body weight trend</h3>
+              <div class="spark-chart" id="progressChart"></div>
+            </div>
+            <div class="card-flat pad-1">
+              <div class="progress-table-wrap">
+                <table class="table-fit">
+                  <thead><tr><th>Date</th><th>Weight</th><th>Reps</th><th>Duration</th></tr></thead>
+                  <tbody id="progressBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="site-footer"></div>
+  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/progress-tracker.js"></script>
+</body>
+</html>
